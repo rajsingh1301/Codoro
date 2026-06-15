@@ -1,11 +1,17 @@
-/**
- * @file src/lib/dynamodb/client.ts
- * @description Document Client initialization for AWS DynamoDB.
- * Supports connection pooling and optimized request timeouts for high-throughput scaling.
- * modeling users, communities, streams, and message indexing.
- */
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
-export const dynamoDbClient = {
-  // TODO: Initialize AWS SDK DynamoDB Document Client
-  // docClient = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }));
+const region = process.env.AWS_REGION || "us-east-1";
+
+const clientConfig: Record<string, any> = {
+  region,
 };
+
+if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
+  clientConfig.credentials = {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  };
+}
+
+export const dynamoClient = new DynamoDBClient(clientConfig);
+

@@ -1,19 +1,43 @@
-import { use } from "react";
+import { getCommunityById } from "@/src/services/community-services";
 
-interface CommunityDetailsPageProps {
-  params: Promise<{
-    communityId: string;
-  }>;
-}
+export default async function CommunityPage({
+  params,
+}: {
+  params: Promise<{ communityId: string }>;
+}) {
+  const { communityId } = await params;
 
-export default function CommunityDetailsPage({ params }: CommunityDetailsPageProps) {
-  const resolvedParams = use(params);
-  const communityId = resolvedParams.communityId;
+  const community = await getCommunityById(
+    communityId
+  );
+
+  if (!community) {
+    return (
+      <div className="p-8">
+        Community not found
+      </div>
+    );
+  }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-2">
-      <h1 className="text-2xl font-bold">Community Details Page</h1>
-      <p className="text-zinc-500">Viewing community: {communityId}</p>
+    <div className="p-8 max-w-4xl mx-auto">
+      <h1 className="text-4xl font-bold">
+        {community.name}
+      </h1>
+
+      <p className="mt-4 text-gray-600">
+        {community.description}
+      </p>
+
+      <div className="mt-8 border rounded-lg p-6">
+        <h2 className="text-2xl font-semibold">
+          Streams
+        </h2>
+
+        <p className="mt-2 text-gray-500">
+          No streams yet.
+        </p>
+      </div>
     </div>
   );
 }
