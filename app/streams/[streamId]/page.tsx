@@ -1,19 +1,29 @@
-import { use } from "react";
+import { getStreamById } from "@/src/services/streams-services";
 
-interface StreamDetailsPageProps {
-  params: Promise<{
-    streamId: string;
-  }>;
-}
+export default async function StreamPage({
+  params,
+}: {
+  params: Promise<{ streamId: string }>;
+}) {
+  const { streamId } = await params;
 
-export default function StreamDetailsPage({ params }: StreamDetailsPageProps) {
-  const resolvedParams = use(params);
-  const streamId = resolvedParams.streamId;
+  const stream = await getStreamById(streamId);
+
+  if (!stream) {
+    return <div>Stream not found</div>;
+  }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-2">
-      <h1 className="text-2xl font-bold">Stream Player Page</h1>
-      <p className="text-zinc-500">Creator Stream: {streamId}</p>
+    <div className="p-8">
+      <h1 className="text-4xl font-bold">{stream.title}</h1>
+
+      <p className="mt-4">{stream.description}</p>
+
+      <div className="mt-8 border rounded p-8">
+        Live Stream Player Coming Soon
+      </div>
+
+      <div className="mt-8 border rounded p-8">Live Chat Coming Soon</div>
     </div>
   );
 }
