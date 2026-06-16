@@ -4,7 +4,7 @@ export interface Stream {
   description: string;
   creatorId: string;
   communityId: string;
-  status: "LIVE" | "OFFLINE";
+  status: "OFFLINE" | "LIVE" | "ENDED";
   playbackUrl: string;
   createdAt: string;
 }

@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
+import { askAI } from "@/src/services/ai-services";
 
-/**
- * @route POST /api/ai
- * @desc Get AI-generated explanation of code files or current stream context.
- * 
- * @scalability
- * - Leverages AWS Bedrock (Claude model) using stream responses (Server Sent Events) to reduce perceived user latency.
- * - Rate limited heavily per user to control infrastructure costs.
- * - Prompts cached using embeddings if repeating exact code questions.
- */
+export async function POST(request: Request) {
+  try {
+    const { question } = await request.json();
 
-export async function POST() {
-  return NextResponse.json({
-    message: "POST /api/ai - AI code assistant placeholder response"
-  });
+    const response = await askAI(question);
+
+    return NextResponse.json({
+      response,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      {
+        error: "Failed to get AI response",
+      },
+      {
+        status: 500,
+      }
+    );
+  }
 }

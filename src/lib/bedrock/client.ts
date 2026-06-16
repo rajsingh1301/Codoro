@@ -1,10 +1,11 @@
-/**
- * @file src/lib/bedrock/client.ts
- * @description AWS Bedrock runtime client client configuration.
- * For querying AI foundation models (like Claude or Llama) for developer stream explanations.
- */
+import { BedrockRuntimeClient } from "@aws-sdk/client-bedrock-runtime";
 
-export const bedrockClient = {
-  // TODO: Initialize BedrockRuntimeClient from @aws-sdk/client-bedrock-runtime
-  // client = new BedrockRuntimeClient({ region: process.env.AWS_REGION });
-};
+export const bedrockClient = new BedrockRuntimeClient({
+  region: "us-east-1",
+
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});

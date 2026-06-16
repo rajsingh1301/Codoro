@@ -1,6 +1,6 @@
 import { STSClient, GetCallerIdentityCommand } from "@aws-sdk/client-sts";
 console.log("STS test started");
-const clientConfig: Record<string, any> = {
+const clientConfig = {
   region: "us-east-1",
 };
 

@@ -1,34 +1,36 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-
 import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-const region = process.env.AWS_REGION || "us-east-1";
 
-const clientConfig: Record<string, any> = {
-  region,
-};
+console.log(
+  "KEY PREFIX:",
 
-if (process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY) {
-  clientConfig.credentials = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  };
-}
- // Initialize the DynamoDB client
+  process.env.AWS_ACCESS_KEY_ID?.substring(0, 10),
+);
+
+console.log(
+  "SECRET EXISTS:",
+
+  !!process.env.AWS_SECRET_ACCESS_KEY,
+);
+
+console.log(
+  "SECRET LENGTH:",
+
+  process.env.AWS_SECRET_ACCESS_KEY?.length,
+);
+
+console.log(
+  "REGION:",
+
+  process.env.AWS_REGION,
+);
+
 export const dynamoClient = new DynamoDBClient({
-
-  region: "us-east-1",
-
+  region: process.env.AWS_REGION || "us-east-1",
   credentials: {
-
     accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
-
   },
-
 });
 
-// Create a DynamoDB Document Client for easier interactions
-export const docClient =
-
-  DynamoDBDocumentClient.from(dynamoClient);
+export const docClient = DynamoDBDocumentClient.from(dynamoClient);
