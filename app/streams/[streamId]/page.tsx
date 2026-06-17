@@ -43,7 +43,10 @@ export default async function StreamPage({
       <div className="mt-8 border rounded p-8">Live Chat Coming Soon</div>
 
       <div className="mt-8">
-        <AIAssistant />
+        <AIAssistant
+          streamTitle={stream.title}
+          streamDescription={stream.description}
+        />
       </div>
     </div>
   );

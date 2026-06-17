@@ -3,15 +3,32 @@ import { askAI } from "@/src/services/ai-services";
 
 export async function POST(request: Request) {
   try {
-    const { question } = await request.json();
+    const {
+      question,
+      code,
+      streamTitle,
+      streamDescription,
+    } = await request.json();
 
-    const response = await askAI(question);
+    console.log("AI API Request:", {
+      question,
+      code,
+      streamTitle,
+      streamDescription,
+    });
+
+    const response = await askAI(
+      question,
+      code,
+      streamTitle,
+      streamDescription
+    );
 
     return NextResponse.json({
       response,
     });
   } catch (error) {
-    console.error(error);
+    console.error("AI ROUTE ERROR:", error);
 
     return NextResponse.json(
       {

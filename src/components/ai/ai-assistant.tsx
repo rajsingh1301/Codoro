@@ -2,8 +2,17 @@
 
 import { useState } from "react";
 
-export default function AIAssistant() {
+type Props = {
+  streamTitle: string;
+  streamDescription: string;
+};
+
+export default function AIAssistant({
+  streamTitle,
+  streamDescription,
+}: Props) {
   const [question, setQuestion] = useState("");
+  const [code, setCode] = useState("");
   const [response, setResponse] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -17,6 +26,9 @@ export default function AIAssistant() {
       },
       body: JSON.stringify({
         question,
+        code,
+        streamTitle,
+        streamDescription,
       }),
     });
 
@@ -35,6 +47,13 @@ export default function AIAssistant() {
         onChange={(e) => setQuestion(e.target.value)}
         placeholder="Ask anything..."
         className="w-full border p-3 rounded"
+      />
+
+      <textarea
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        placeholder="Paste code here..."
+        className="w-full border p-3 rounded mt-4 h-48"
       />
 
       <button onClick={handleAsk} className="mt-4 border px-4 py-2 rounded">
