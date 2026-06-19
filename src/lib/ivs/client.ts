@@ -1,10 +1,10 @@
-/**
- * @file src/lib/ivs/client.ts
- * @description AWS Interactive Video Service (IVS) management client config.
- * Handles channel creation, stream keys retrieval, and live playback configurations.
- */
+import { IvsClient } from "@aws-sdk/client-ivs";
 
-export const ivsClient = {
-  // TODO: Initialize IvsClient from @aws-sdk/client-ivs
-  // client = new IvsClient({ region: process.env.AWS_REGION });
-};
+export const ivsClient = new IvsClient({
+  region: process.env.AWS_REGION || "us-east-1",
+
+  credentials: {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+  },
+});

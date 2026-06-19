@@ -1,6 +1,8 @@
 import { getStreamById } from "@/src/services/streams-services";
 import { goLive, endStream } from "@/src/actions/stream-status-actions";
 import AIAssistant from "@/src/components/ai/ai-assistant";
+import StreamSummary from "@/src/components/ai/stream-summary";
+
 export default async function StreamPage({
   params,
 }: {
@@ -44,6 +46,10 @@ export default async function StreamPage({
 
       <div className="mt-8">
         <AIAssistant
+          streamTitle={stream.title}
+          streamDescription={stream.description}
+        />
+        <StreamSummary
           streamTitle={stream.title}
           streamDescription={stream.description}
         />
