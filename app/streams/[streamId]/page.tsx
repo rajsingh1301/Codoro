@@ -2,7 +2,7 @@ import { getStreamById } from "@/src/services/streams-services";
 import { goLive, endStream } from "@/src/actions/stream-status-actions";
 import AIAssistant from "@/src/components/ai/ai-assistant";
 import StreamSummary from "@/src/components/ai/stream-summary";
-
+import IVSPlayer from "@/src/components/stream/ivs-player";
 export default async function StreamPage({
   params,
 }: {
@@ -42,7 +42,6 @@ export default async function StreamPage({
           <div>Stream Offline</div>
         )}
       </div>
-
       <div className="mt-6 border rounded p-4">
         <h2 className="font-bold mb-2">
           Streaming Information
@@ -66,17 +65,30 @@ export default async function StreamPage({
           {stream.streamKey}
         </p>
       </div>
-
-      <div className="mt-8 border rounded p-8">Live Chat Coming Soon</div>
+      <div className="mt-8 border rounded p-4">
+        {stream.playbackUrl ? (
+          <IVSPlayer
+            playbackUrl={stream.playbackUrl}
+          />
+        ) : (
+          <div>No playback URL found</div>
+        )}
+      </div>
 
       <div className="mt-8">
         <AIAssistant
+
           streamTitle={stream.title}
+
           streamDescription={stream.description}
+
         />
         <StreamSummary
+
           streamTitle={stream.title}
+
           streamDescription={stream.description}
+
         />
       </div>
     </div>
