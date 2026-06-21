@@ -3,6 +3,7 @@ import { docClient } from "@/src/lib/dynamodb/client";
 import { randomUUID } from "crypto";
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import { createIVSChannel } from "@/src/services/ivs-services";
 
 // Create a new stream in the database
 export async function createStreamInDB(data: {
@@ -12,21 +13,36 @@ export async function createStreamInDB(data: {
 }) {
   const streamId = randomUUID();
 
+  const ivs = await createIVSChannel(data.title);
+
+  console.log("IVS CHANNEL CREATED:", ivs);
   await docClient.send(
     new PutCommand({
       TableName: "streams",
       Item: {
+
         streamId,
+
         title: data.title,
+
         description: data.description,
+
         communityId: data.communityId,
 
         creatorId: "temp-user",
+
         creatorName: "Mayank",
 
         status: "OFFLINE",
 
+        channelArn: ivs.channelArn,
+
+        playbackUrl: ivs.playbackUrl,
+
+        streamKey: ivs.streamKey,
+
         createdAt: new Date().toISOString(),
+
       },
     }),
   );

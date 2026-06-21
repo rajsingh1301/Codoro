@@ -6,5 +6,7 @@ export interface Stream {
   communityId: string;
   status: "OFFLINE" | "LIVE" | "ENDED";
   playbackUrl: string;
+  streamKey?: string;
+  channelArn?: string;
   createdAt: string;
 }

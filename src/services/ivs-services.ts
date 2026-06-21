@@ -2,8 +2,12 @@ import { CreateChannelCommand } from "@aws-sdk/client-ivs";
 import { ivsClient } from "@/src/lib/ivs/client";
 
 export async function createIVSChannel(name: string) {
+  const safeName = name
+    .replace(/[^a-zA-Z0-9-_]/g, "-")
+    .toLowerCase();
+
   const command = new CreateChannelCommand({
-    name,
+    name: safeName,
     latencyMode: "LOW",
     type: "STANDARD",
   });

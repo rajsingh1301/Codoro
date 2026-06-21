@@ -42,6 +42,31 @@ export default async function StreamPage({
           <div>Stream Offline</div>
         )}
       </div>
+
+      <div className="mt-6 border rounded p-4">
+        <h2 className="font-bold mb-2">
+          Streaming Information
+        </h2>
+
+        <p>
+          <strong>Playback URL:</strong>
+        </p>
+
+        <p className="break-all text-sm">
+          {stream.playbackUrl}
+        </p>
+
+        <br />
+
+        <p>
+          <strong>Stream Key:</strong>
+        </p>
+
+        <p className="break-all text-sm">
+          {stream.streamKey}
+        </p>
+      </div>
+
       <div className="mt-8 border rounded p-8">Live Chat Coming Soon</div>
 
       <div className="mt-8">
