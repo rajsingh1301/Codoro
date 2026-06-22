@@ -1,3 +1,4 @@
+
 interface CommunityCardProps {
   name: string;
   description: string;

@@ -3,14 +3,10 @@ import { askAI } from "@/src/services/ai-services";
 
 export async function POST(request: Request) {
   try {
-    const {
-      question,
-      code,
-      streamTitle,
-      streamDescription,
-    } = await request.json();
+    const { question, code, streamTitle, streamDescription } =
+      await request.json();
 
-    console.log("AI API Request:", {
+    console.log({
       question,
       code,
       streamTitle,
@@ -21,7 +17,7 @@ export async function POST(request: Request) {
       question,
       code,
       streamTitle,
-      streamDescription
+      streamDescription,
     );
 
     return NextResponse.json({
@@ -36,7 +32,7 @@ export async function POST(request: Request) {
       },
       {
         status: 500,
-      }
+      },
     );
   }
 }

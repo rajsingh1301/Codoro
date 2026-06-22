@@ -10,6 +10,7 @@ type Props = {
 export default function AIAssistant({
   streamTitle,
   streamDescription,
+
 }: Props) {
   const [question, setQuestion] = useState("");
   const [code, setCode] = useState("");
@@ -17,22 +18,57 @@ export default function AIAssistant({
   const [loading, setLoading] = useState(false);
 
   async function handleAsk() {
+
+    alert(
+
+      JSON.stringify({
+
+        question,
+
+        code,
+
+        streamTitle,
+
+        streamDescription,
+
+      })
+
+    );
+
+
     setLoading(true);
 
+
+
     const res = await fetch("/api/ai", {
+
       method: "POST",
+
       headers: {
+
         "Content-Type": "application/json",
+
       },
+
       body: JSON.stringify({
+
         question,
+
         code,
+
         streamTitle,
+
         streamDescription,
+
       }),
+
     });
 
+    console.log("Status:", res.status);
+
     const data = await res.json();
+
+    console.log("Response:", data);
 
     setResponse(data.response);
     setLoading(false);
@@ -50,16 +86,16 @@ export default function AIAssistant({
       />
 
       <textarea
+
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder="Paste code here..."
         className="w-full border p-3 rounded mt-4 h-48"
-      />
 
+      />
       <button onClick={handleAsk} className="mt-4 border px-4 py-2 rounded">
         {loading ? "Thinking..." : "Ask AI"}
       </button>
-
       {response && <div className="mt-6 border rounded p-4">{response}</div>}
     </div>
   );

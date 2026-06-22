@@ -6,7 +6,7 @@ export async function askAI(
   question: string,
   code: string = "",
   streamTitle: string = "",
-  streamDescription: string = ""
+  streamDescription: string = "",
 ) {
   const command = new ConverseCommand({
     modelId: "amazon.nova-lite-v1:0",
@@ -73,7 +73,7 @@ If no code is provided, answer the user's question normally.
 Always tailor your answer to the stream context and technology being discussed.
 
 Do not give generic responses if stream context is available.
-`
+`,
           },
         ],
       },
@@ -88,7 +88,7 @@ Do not give generic responses if stream context is available.
 // generateStreamSummary function for generating stream summaries
 export async function generateStreamSummary(
   streamTitle: string,
-  streamDescription: string
+  streamDescription: string,
 ) {
   const command = new ConverseCommand({
     modelId: "amazon.nova-lite-v1:0",

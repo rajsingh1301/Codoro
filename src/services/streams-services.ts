@@ -41,7 +41,11 @@ export async function createStreamInDB(data: {
 
         streamKey: ivs.streamKey,
 
+        viewCount: 0,
+
         createdAt: new Date().toISOString(),
+
+        
 
       },
     }),
