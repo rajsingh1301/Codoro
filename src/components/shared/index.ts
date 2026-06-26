@@ -5,4 +5,4 @@
  * Design target: Core shell layout elements, responsive sidebars.
  */
 
-export {};
+export { default as Header } from "./header";
