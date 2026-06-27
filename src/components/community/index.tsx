@@ -9,9 +9,9 @@ export function CommunityCard({
   description,
 }: CommunityCardProps) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 shadow-sm">
-      <h2 className="text-xl font-bold text-white">{name}</h2>
-      <p className="text-zinc-400 mt-1 text-sm">
+    <div className="group rounded-[14px] border border-border-main bg-card-bg hover:bg-card-elevated p-6 shadow-sm hover:border-brand/35 transition duration-200">
+      <h2 className="text-lg font-bold text-txt-primary group-hover:text-brand transition duration-200">{name}</h2>
+      <p className="text-txt-secondary mt-2 text-xs sm:text-sm leading-relaxed">
         {description}
       </p>
     </div>

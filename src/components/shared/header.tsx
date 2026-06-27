@@ -1,36 +1,46 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SignInButton, SignUpButton, Show, UserButton } from "@clerk/nextjs";
 
 export default function Header() {
+  const pathname = usePathname();
+
+  const getLinkClass = (href: string) => {
+    const isActive = pathname === href;
+    return `text-xs font-semibold transition duration-200 tracking-wide ${
+      isActive ? "text-brand font-bold" : "text-txt-secondary hover:text-txt-primary"
+    }`;
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-955/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-8">
+    <header className="sticky top-0 z-50 w-full border-b border-border-main bg-bg-main/80 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-[1280px] items-center justify-between px-4 sm:px-6 md:px-8">
         {/* Left: Logo and navigation */}
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-10">
           <Link 
             href="/" 
-            className="text-xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wide"
+            className="text-base font-black text-txt-primary tracking-wider uppercase hover:text-brand transition duration-200"
           >
-            Codorö
+            Codorö<span className="text-brand font-black">.</span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-8">
             <Link 
               href="/dashboard" 
-              className="text-sm font-medium text-slate-300 hover:text-white transition duration-200"
+              className={getLinkClass("/dashboard")}
             >
               Dashboard
             </Link>
             <Link 
               href="/streams" 
-              className="text-sm font-medium text-slate-300 hover:text-white transition duration-200"
+              className={getLinkClass("/streams")}
             >
               Streams
             </Link>
             <Link 
               href="/communities" 
-              className="text-sm font-medium text-slate-300 hover:text-white transition duration-200"
+              className={getLinkClass("/communities")}
             >
               Communities
             </Link>
@@ -42,12 +52,12 @@ export default function Header() {
           <Show when="signed-out">
             <div className="flex items-center gap-3">
               <SignInButton mode="modal">
-                <button className="px-4 py-1.5 rounded-lg border border-white/10 hover:border-white/20 text-xs font-medium text-white transition duration-200 cursor-pointer">
+                <button className="px-4 py-1.5 rounded-xl border border-border-main bg-card-bg hover:bg-hover-bg text-xs font-bold text-txt-secondary hover:text-txt-primary transition duration-200 cursor-pointer">
                   Sign In
                 </button>
               </SignInButton>
               <SignUpButton mode="modal">
-                <button className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-medium text-white transition duration-200 cursor-pointer">
+                <button className="px-4 py-1.5 rounded-xl bg-brand hover:bg-brand-hover shadow-sm text-xs font-bold text-white transition duration-200 cursor-pointer">
                   Sign Up
                 </button>
               </SignUpButton>
@@ -57,7 +67,7 @@ export default function Header() {
           <Show when="signed-in">
             <UserButton showName appearance={{
               elements: {
-                userButtonOuterIdentifier: "text-slate-300 font-medium text-xs mr-1"
+                userButtonOuterIdentifier: "text-txt-secondary font-bold text-xs mr-1 uppercase tracking-wider"
               }
             }} />
           </Show>

@@ -18,44 +18,70 @@ export default async function CommunityPage({
   }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-4xl font-bold">{community.name}</h1>
+    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-10 space-y-8 text-txt-primary">
+      <div className="space-y-1.5">
+        <Link
+          href="/communities"
+          className="text-xs text-brand hover:text-brand-hover font-bold transition flex items-center gap-1.5 cursor-pointer"
+        >
+          ← Back to Communities
+        </Link>
+        <h1 className="text-3xl font-extrabold text-txt-primary tracking-tight mt-2">{community.name}</h1>
+        <p className="text-sm text-txt-secondary leading-relaxed max-w-2xl">{community.description}</p>
+      </div>
 
-      <p className="mt-4 text-gray-600">{community.description}</p>
-
-      <div className="mt-8 border rounded-lg p-6">
-        <h2 className="text-2xl font-semibold">Streams</h2>
+      <div className="bg-card-bg border border-border-main rounded-[14px] p-6 shadow-sm space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-txt-primary">Broadcast Sessions</h2>
+          <Link
+            href={`/communities/${communityId}/streams/create`}
+            className="px-5 py-2.5 rounded-xl bg-brand hover:bg-brand-hover text-white font-bold text-xs tracking-wider transition duration-200 cursor-pointer"
+          >
+            Create Stream
+          </Link>
+        </div>
 
         {streams.length === 0 ? (
-          <p className="mt-2 text-gray-500">No streams yet.</p>
+          <div className="text-center py-8 text-txt-muted text-xs font-medium">
+            No stream sessions broadcasting in this circle yet.
+          </div>
         ) : (
-          <div className="mt-4 space-y-3">
-            {streams.map((stream: any) => (
-             <Link
+          <div className="space-y-4">
+            {streams.map((stream: any) => {
+              const isStreamLive = stream.status === "LIVE";
+              return (
+                <Link
+                  key={stream.streamId}
+                  href={`/streams/${stream.streamId}`}
+                  className="group block border border-border-main p-4 rounded-xl bg-surface hover:border-brand/40 transition duration-200"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="space-y-1">
+                      <h3 className="font-bold text-sm text-txt-primary group-hover:text-brand transition">
+                        {stream.title}
+                      </h3>
+                      <p className="text-xs text-txt-secondary leading-relaxed line-clamp-2">
+                        {stream.description || "No stream description provided."}
+                      </p>
+                    </div>
 
-  key={stream.streamId}
-
-  href={`/streams/${stream.streamId}`}
-
-  className="block border p-3 rounded hover:bg-gray-50"
-
->
-                <h3 className="font-semibold">{stream.title}</h3>
-
-                <p className="text-sm text-gray-600">{stream.description}</p>
-
-                <p className="text-xs mt-2">Status: {stream.status}</p>
-              </Link>
-            ))}
+                    <div>
+                      {isStreamLive ? (
+                        <span className="inline-flex items-center gap-1.5 bg-rose-600/90 text-white font-bold text-[9px] uppercase px-2 py-0.5 rounded-xl">
+                          LIVE
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center bg-card-bg border border-border-main text-txt-secondary font-bold text-[9px] uppercase px-2 py-0.5 rounded-xl">
+                          OFFLINE
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         )}
-
-        <Link
-          href={`/communities/${communityId}/streams/create`}
-          className="inline-block mt-6 border px-4 py-2 rounded hover:bg-gray-100 transition"
-        >
-          Create Stream
-        </Link>
       </div>
     </div>
   );

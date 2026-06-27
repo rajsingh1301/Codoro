@@ -105,3 +105,19 @@ export async function updateStreamStatus(
     }),
   );
 }
+
+// Get all streams from the database
+export async function getAllStreams() {
+  try {
+    const result = await docClient.send(
+      new ScanCommand({
+        TableName: "streams",
+      }),
+    );
+    return result.Items || [];
+  } catch (error) {
+    console.error("GET ALL STREAMS ERROR:", error);
+    return [];
+  }
+}
+

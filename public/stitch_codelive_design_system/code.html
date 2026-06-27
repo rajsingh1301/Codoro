@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CodeLive | Stream the Future of Code</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+        :root {
+            --primary-glow: rgba(226, 232, 240, 0.1);
+            --metallic-bg: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        body {
+            background: #050505;
+            color: #f8fafc;
+            font-family: 'Poppins', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+        }
+        .metallic-surface {
+            background: linear-gradient(145deg, #1e1e1e 0%, #0f0f0f 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+        }
+        .etched-border {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 0 1px rgba(0,0,0,0.3);
+        }
+        @keyframes pulse-live {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-pulse-live {
+            animation: pulse-live 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        .chrome-text {
+            background: linear-gradient(to bottom, #ffffff 20%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container": "#121212",
+                      "on-surface": "#f1f5f9",
+                      "error": "#ef4444",
+                      "surface-container-lowest": "#050505",
+                      "primary": "#e2e8f0",
+                      "tertiary": "#94a3b8",
+                      "secondary-fixed-dim": "#cbd5e1",
+                      "on-tertiary-fixed": "#0f172a",
+                      "primary-fixed": "#f8fafc",
+                      "on-primary-container": "#f1f5f9",
+                      "success": "#10b981",
+                      "on-secondary-fixed": "#020617",
+                      "outline-variant": "#334155",
+                      "on-surface-variant": "#94a3b8",
+                      "danger": "#be123c",
+                      "on-primary-fixed-variant": "#475569",
+                      "surface": "#0a0a0a",
+                      "on-error-container": "#fecaca",
+                      "tertiary-fixed": "#e2e8f0",
+                      "on-secondary-fixed-variant": "#334155",
+                      "surface-container-high": "#1a1a1a",
+                      "on-tertiary-container": "#f1f5f9",
+                      "primary-container": "#334155",
+                      "surface-elevated": "#1e1e1e",
+                      "on-tertiary-fixed-variant": "#475569",
+                      "tertiary-fixed-dim": "#94a3b8",
+                      "text-secondary": "#94a3b8",
+                      "text-primary": "#f8fafc",
+                      "surface-bright": "#262626",
+                      "surface-tint": "#e2e8f0",
+                      "surface-container-highest": "#262626",
+                      "secondary-container": "#1e293b",
+                      "error-container": "#7f1d1d",
+                      "outline": "#475569",
+                      "warning": "#f59e0b",
+                      "inverse-surface": "#f8fafc",
+                      "on-tertiary": "#0f172a",
+                      "secondary-fixed": "#f1f5f9",
+                      "on-error": "#ffffff",
+                      "surface-variant": "#1a1a1a",
+                      "on-primary": "#0f172a",
+                      "inverse-on-surface": "#0f172a",
+                      "background": "#050505",
+                      "on-primary-fixed": "#020617",
+                      "surface-container-low": "#0d0d0d",
+                      "surface-dim": "#050505",
+                      "tertiary-container": "#1e293b",
+                      "primary-fixed-dim": "#cbd5e1",
+                      "text-muted": "#64748b",
+                      "on-background": "#f8fafc",
+                      "on-secondary-container": "#cbd5e1",
+                      "secondary": "#94a3b8",
+                      "on-secondary": "#0f172a",
+                      "border-subtle": "rgba(255, 255, 255, 0.08)",
+                      "inverse-primary": "#1e293b"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "unit": "8px",
+                      "margin-desktop": "32px",
+                      "space-6": "24px",
+                      "space-10": "40px",
+                      "margin-mobile": "16px",
+                      "space-16": "64px",
+                      "margin-tablet": "24px",
+                      "space-1": "4px",
+                      "space-4": "16px",
+                      "space-3": "12px",
+                      "space-8": "32px",
+                      "max-width": "1280px",
+                      "space-2": "8px",
+                      "space-12": "48px",
+                      "space-24": "96px"
+              },
+              "fontFamily": {
+                      "headline-lg-mobile": ["Poppins"],
+                      "headline-md": ["Poppins"],
+                      "tiny": ["Poppins"],
+                      "headline-sm": ["Poppins"],
+                      "headline-lg": ["Poppins"],
+                      "body": ["Poppins"],
+                      "label-mono": ["JetBrains Mono"],
+                      "caption": ["Poppins"]
+              },
+              "fontSize": {
+                      "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "800"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "700"}],
+                      "tiny": ["10px", {"lineHeight": "14px", "fontWeight": "500"}],
+                      "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                      "headline-lg": ["30px", {"lineHeight": "36px", "letterSpacing": "-0.025em", "fontWeight": "800"}],
+                      "body": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "label-mono": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                      "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-background text-on-background selection:bg-primary/20">
+<!-- TopNavBar -->
+<header class="sticky top-0 z-50 flex items-center justify-between px-margin-desktop w-full max-w-max-width mx-auto h-16 border-b border-white/10 bg-background/90 backdrop-blur-xl">
+<div class="flex items-center gap-space-8">
+<span class="font-headline-md text-headline-md font-extrabold tracking-tighter chrome-text">CodeLive</span>
+<nav class="hidden md:flex items-center gap-space-6 ml-space-4">
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-mono text-label-mono" href="#">Browse</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-mono text-label-mono" href="#">Community</a>
+<a class="text-on-surface-variant font-medium hover:text-primary transition-colors font-label-mono text-label-mono" href="#">Dashboards</a>
+</nav>
+</div>
+<div class="flex items-center gap-space-4">
+<div class="hidden lg:flex items-center bg-surface-container-low border border-white/10 px-space-3 py-space-1 rounded-sm gap-space-2 etched-border">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+<input class="bg-transparent border-none text-body font-body focus:ring-0 w-48 placeholder:text-on-surface-variant/40" placeholder="Search streams..." type="text"/>
+</div>
+<div class="flex items-center gap-space-2">
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary hover:bg-white/5 rounded-full transition-all">notifications</button>
+<button class="material-symbols-outlined p-2 text-on-surface-variant hover:text-primary hover:bg-white/5 rounded-full transition-all">settings</button>
+<button class="ml-space-2 bg-primary text-background font-bold px-space-4 py-space-2 rounded-sm font-label-mono text-label-mono hover:bg-white active:scale-95 transition-all shadow-lg shadow-white/5">Go Live</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative overflow-hidden pt-space-24 pb-space-24">
+<!-- Subtle Metallic Gradient -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[600px] bg-gradient-to-b from-white/5 via-transparent to-transparent pointer-events-none -z-10"></div>
+<div class="max-w-max-width mx-auto px-margin-desktop text-center">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 mb-space-6 etched-border">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse shadow-[0_0_8px_rgba(255,255,255,0.5)]"></span>
+<span class="text-label-mono font-label-mono text-primary text-[10px] tracking-wider uppercase">Alpha Release v1.0.4</span>
+</div>
+<h1 class="font-headline-lg text-[64px] leading-[1.1] font-extrabold tracking-tight mb-space-6 chrome-text">
+                    Stream the Future <br/> of Code
+                </h1>
+<p class="font-body text-body text-on-surface-variant max-w-xl mx-auto mb-space-10">
+                    Connect with developers worldwide. Build together in real-time, share your technical expertise, and discover a global community of modern builders.
+                </p>
+<div class="flex flex-col sm:flex-row items-center justify-center gap-space-4">
+<button class="px-space-8 py-space-4 bg-primary text-background font-bold rounded-sm hover:bg-white active:scale-95 transition-all shadow-xl shadow-white/5 flex items-center gap-2 group">
+                        Start Streaming
+                        <span class="material-symbols-outlined group-hover:rotate-12 transition-transform">bolt</span>
+</button>
+<button class="px-space-8 py-space-4 bg-transparent text-on-surface-variant font-medium rounded-sm hover:text-primary hover:bg-white/5 transition-all border border-white/5 etched-border flex items-center gap-2">
+                        Browse Communities
+                        <span class="material-symbols-outlined">groups</span>
+</button>
+</div>
+</div>
+</section>
+<!-- Featured Section: Live Now -->
+<section class="max-w-max-width mx-auto px-margin-desktop pb-space-24">
+<div class="flex items-end justify-between mb-space-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2 chrome-text">Live Now</h2>
+<p class="font-body text-body text-on-surface-variant">Top technical streams happening across the globe.</p>
+</div>
+<button class="text-on-surface-variant font-label-mono text-label-mono hover:text-primary transition-colors flex items-center gap-1 group">
+                    View all streams
+                    <span class="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+</div>
+<!-- Bento-style Stream Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-6">
+<!-- Stream Card 1 -->
+<div class="group relative bg-surface-container-low border border-white/10 rounded-sm overflow-hidden hover:border-white/30 transition-all duration-500 etched-border metallic-surface">
+<div class="aspect-video relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" data-alt="A high-fidelity digital interface of a Rust code editor with syntax highlighting, glowing indigo and slate tones, minimal UI design, cinematic lighting, and sharp technical focus, reflecting a professional developer workspace aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUL4Mf9Hz1M_yZO2YBNbK3cE1FRyDMo0d_7cmT855U0eSOPfjuMOTsOdem0-NzEzkxCXYLRyVdvufejPmcczCH_we2OEWoId-LOECyxzqvTyxO3okMZ9yQQHYVn6QpaDEyp3HV4v1NPeYMCEeAZ5UBvf1UovG8UCtX8REkKAyqvIwDxrKlYmhNmiZjP8xxztI6q107MIMnF8jS0qIptlHLBQviOeIqZOc8h92vQQEe9xvez71mmhCc4J0sY-4QpubZ5EBLR__UcSk"/>
+<!-- Badges -->
+<div class="absolute top-space-3 left-space-3 z-20 flex gap-space-2">
+<span class="bg-danger text-white px-2 py-0.5 rounded-sm text-[10px] font-bold tracking-tighter flex items-center gap-1 uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse-live"></span>
+                                Live
+                            </span>
+<span class="bg-black/80 backdrop-blur-md text-white px-2 py-0.5 rounded-sm text-[10px] font-label-mono flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[12px]">visibility</span>
+                                1.2k
+                            </span>
+</div>
+</div>
+<div class="p-space-4">
+<div class="flex gap-space-3">
+<img class="w-10 h-10 rounded-sm border border-white/20 shrink-0 object-cover" data-alt="A minimalist professional developer avatar, centered composition, soft indigo ambient lighting, high-end 3D render, wearing modern black attire, clean background, slate and primary color palette." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAMAbt6BtHW7OdSuhP8Wun13OPeAz-Ap-FOQFA555kirGdCXgi7xfLRN2X7N6sowqUdlYB41tFsQJgyjgiW9Yr9zSltwRoUM3ZyljGtbDkqFAK5L8nLoOxIcy2Z1iYfJ5m9jM1W7a_pstYuKGaEbURf9fLLUzGfAE_biwHsrJn8xUsto9AZi5xbJkL1_MsKrnCYsPp78hUAgK36r-4FkSAs2Y0mP2edY7946D56t4oEbqVZ4YNjehbyQ3PO0WbKUeYyCYqCurVQ8Zg"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Building a Rust Compiler from Scratch</h3>
+<p class="font-label-mono text-label-mono text-on-surface-variant truncate">@ferris_builder</p>
+<div class="mt-space-3 flex flex-wrap gap-2">
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-primary">Rust</span>
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-on-surface-variant">Compilers</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stream Card 2 -->
+<div class="group relative bg-surface-container-low border border-white/10 rounded-sm overflow-hidden hover:border-white/30 transition-all duration-500 etched-border metallic-surface">
+<div class="aspect-video relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" data-alt="A modern web dashboard UI being coded in real-time, showing intricate React component structures, a dark mode palette with indigo highlights, clean font rendering, and architectural software design visuals." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARYNScHkqtBQp5OqOr1NnrDd0mJIOJSFdqSQ3N7pdsio5ThgF_EyPWhy7d3iY2zbYvgqcNZZ6iPp4qQYw1kTsYp9h6FZgqo8w0MIPpkBUkBfdq5G-mbg72jAaSlu6k2Imqm49nfBGqBCHus0yw76GlXtPSl5U8-PxDB_VbsZ_bUlb9hxRNj_A-z_-Iu1jzS9s4xroOV3pOdFRwBJFiDyTwFIXWYYcED3QIfSQXfvXyvN_qhDQgAK8qgdiptH9MOkfRe9zr4tp7Gxs"/>
+<div class="absolute top-space-3 left-space-3 z-20 flex gap-space-2">
+<span class="bg-danger text-white px-2 py-0.5 rounded-sm text-[10px] font-bold tracking-tighter flex items-center gap-1 uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse-live"></span>
+                                Live
+                            </span>
+<span class="bg-black/80 backdrop-blur-md text-white px-2 py-0.5 rounded-sm text-[10px] font-label-mono flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[12px]">visibility</span>
+                                842
+                            </span>
+</div>
+</div>
+<div class="p-space-4">
+<div class="flex gap-space-3">
+<img class="w-10 h-10 rounded-sm border border-white/20 shrink-0 object-cover" data-alt="A stylish female developer profile photo, modern tech aesthetic, studio lighting with cool indigo tones, wearing headphones, professional but approachable, high-quality photography, minimal background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTxhxb6m94UoxBk650D-f3sMMFe7gGX02R5MOSFg-dDi4q-l_af_6_MQxfq2n5NBKb6hE6lKm2eW7FaI6CxkcKj3eBQiQiAY2fmChkce3RKLNp31lIMLCnRj-kcj9wLQrUtS0kSbngKqs_iue5AUgcI-ozd2EMxZNn6k7VHk0p3xyQJ8w4FdP6mkYLeLDmQGtKQ1fMORfpodNBLWj0XZ-RZGIapz--cvMQhqiqQNgpAs6zSKmH54tqRHrsg9USQnC2tlrJoW1QZxY"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Distributed Systems with Go</h3>
+<p class="font-label-mono text-label-mono text-on-surface-variant truncate">@gopher_queen</p>
+<div class="mt-space-3 flex flex-wrap gap-2">
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-primary">Golang</span>
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-on-surface-variant">Infrastructure</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Stream Card 3 -->
+<div class="group relative bg-surface-container-low border border-white/10 rounded-sm overflow-hidden hover:border-white/30 transition-all duration-500 etched-border metallic-surface">
+<div class="aspect-video relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent z-10"></div>
+<img class="w-full h-full object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" data-alt="A complex 3D engine visualizer showing real-time rendering metrics, wireframes of geometric shapes, a technical developer environment, vibrant neon primary accents on a dark slate background, professional gaming and development hybrid style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD9tYf2iU-DInnz9PEupU3TzUa_2dXqyRvPQI0wTzDjK_aeVJ6Odz2W3icCEL9wqvHcYM5TRHm9itXFDi4KeQjOfUxRLn3Qc-BVHyjX_La5vNZJBQFTxCLeOCptREfCcYu7C86zsVOM8sAi0pez5seSKMLTM8H-t7vmiz62qYfHCo6zxxWvoxGy9O9gLih2rTkrptcE6pMnmnY3QQpn3dH70eLaeZeI91ZvNnjkL2Nl0ed1oojCq8zpiiTaXOQoz1_Seuiu-PqO4X4"/>
+<div class="absolute top-space-3 left-space-3 z-20 flex gap-space-2">
+<span class="bg-danger text-white px-2 py-0.5 rounded-sm text-[10px] font-bold tracking-tighter flex items-center gap-1 uppercase">
+<span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse-live"></span>
+                                Live
+                            </span>
+<span class="bg-black/80 backdrop-blur-md text-white px-2 py-0.5 rounded-sm text-[10px] font-label-mono flex items-center gap-1 border border-white/10">
+<span class="material-symbols-outlined text-[12px]">visibility</span>
+                                2.1k
+                            </span>
+</div>
+</div>
+<div class="p-space-4">
+<div class="flex gap-space-3">
+<img class="w-10 h-10 rounded-sm border border-white/20 shrink-0 object-cover" data-alt="A futuristic digital avatar representing a developer, wearing a sleek headset, cinematic lighting with indigo and pink neon highlights, 8k resolution, modern minimalist design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZYKR35Z0qDJug9THbtZYp30YUdz3jhDmC2ZGzzLFzcM4FwKfzzHHpwKgJ_7ZkZHmbRyPmj_klzrhN_90-Yw2QU4Dzr0MWbwYNhXyHP1aFqhq5ORUU5FSN8OX-0AglCqtKAhkSapUqsT_JpqjSAuRNIaPVQJvR-w5A2-iOM4fYH-xio8n2Jv8nbdaDSd6tlp5cIqbBmqXVJxA01dFiji9Mvpsv3vuPslGT5LXL0dWROnv0sqPZMtRTKzxmsHzjStFRvBmhE9AbsDY"/>
+<div class="flex-1 min-w-0">
+<h3 class="font-headline-sm text-headline-sm text-on-surface truncate group-hover:text-primary transition-colors">Advanced WebGL Shaders</h3>
+<p class="font-label-mono text-label-mono text-on-surface-variant truncate">@shader_god</p>
+<div class="mt-space-3 flex flex-wrap gap-2">
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-primary">Three.js</span>
+<span class="bg-white/5 border border-white/10 px-2 py-0.5 rounded-sm font-label-mono text-[10px] text-on-surface-variant">Graphics</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Stats Section -->
+<section class="max-w-max-width mx-auto px-margin-desktop pb-space-24">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-space-4">
+<div class="p-space-8 rounded-sm glass-card text-center etched-border">
+<div class="font-headline-lg text-[40px] mb-1 chrome-text">500k+</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest">Active Devs</div>
+</div>
+<div class="p-space-8 rounded-sm glass-card text-center etched-border">
+<div class="font-headline-lg text-[40px] mb-1 chrome-text">12M</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest">Hours Streamed</div>
+</div>
+<div class="p-space-8 rounded-sm glass-card text-center etched-border">
+<div class="font-headline-lg text-[40px] mb-1 chrome-text">2.5k</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest">Open Projects</div>
+</div>
+<div class="p-space-8 rounded-sm glass-card text-center etched-border">
+<div class="font-headline-lg text-[40px] mb-1 chrome-text">99%</div>
+<div class="font-label-mono text-label-mono text-on-surface-variant uppercase tracking-widest">Code Success</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="max-w-max-width mx-auto px-margin-desktop pb-space-24">
+<div class="relative bg-surface-container-high rounded-sm overflow-hidden p-space-12 text-center border border-white/10 shadow-2xl etched-border metallic-surface">
+<div class="absolute top-0 right-0 p-space-6 opacity-5">
+<span class="material-symbols-outlined text-[160px] text-primary" style="font-variation-settings: 'wght' 100;">terminal</span>
+</div>
+<div class="relative z-10">
+<h2 class="font-headline-lg text-[36px] mb-space-4 chrome-text">Ready to ship your stream?</h2>
+<p class="font-body text-body text-on-surface-variant max-w-lg mx-auto mb-space-8">
+                        Join the platform where open-source meets live entertainment. Get started in minutes with our native VS Code extension.
+                    </p>
+<div class="flex flex-col sm:flex-row justify-center items-center gap-space-4">
+<button class="bg-primary text-background font-bold px-space-8 py-space-3 rounded-sm hover:bg-white transition-all flex items-center gap-2 group">
+                            Join Now
+                            <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">rocket_launch</span>
+</button>
+<button class="bg-surface-container border border-white/10 text-on-surface font-medium px-space-8 py-space-3 rounded-sm hover:bg-white/5 transition-all etched-border">
+                            Documentation
+                        </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="w-full py-space-12 px-margin-desktop max-w-max-width mx-auto flex flex-col md:flex-row justify-between items-center gap-space-4 border-t border-white/10 mt-space-16">
+<div class="flex flex-col items-center md:items-start gap-space-2">
+<div class="font-label-mono text-label-mono font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">data_object</span>
+                CodeLive
+            </div>
+<p class="font-caption text-caption text-text-muted">© 2024 CodeLive Protocol. Industrial Grade Streaming.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-space-6">
+<a class="text-text-muted hover:text-primary transition-colors font-body text-body" href="#">Terms</a>
+<a class="text-text-muted hover:text-primary transition-colors font-body text-body" href="#">Privacy</a>
+<a class="text-text-muted hover:text-primary transition-colors font-body text-body" href="#">API Docs</a>
+<a class="text-text-muted hover:text-primary transition-colors font-body text-body" href="#">Status</a>
+<a class="text-text-muted hover:text-primary transition-colors font-body text-body flex items-center gap-1 group" href="#">
+                GitHub
+                <span class="material-symbols-outlined text-[14px] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform">open_in_new</span>
+</a>
+</nav>
+</footer>
+<script>
+        // Micro-interaction for stream cards
+        document.querySelectorAll('.group').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                if (card.classList.contains('metallic-surface')) {
+                    card.style.transform = 'translateY(-6px) scale(1.01)';
+                }
+            });
+            card.addEventListener('mouseleave', () => {
+                if (card.classList.contains('metallic-surface')) {
+                    card.style.transform = 'translateY(0) scale(1)';
+                }
+            });
+        });
+
+        // Simple smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body></html>
