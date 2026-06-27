@@ -99,13 +99,11 @@ export default function BrowserBroadcaster({ streamKey, ingestUrl }: Props) {
   const cleanupAllStreamsAndDevices = async () => {
     if (clientRef.current) {
       try {
-        if (isCameraActive) {
-          if (clientRef.current.getVideoInputDevice("camera")) {
-            await clientRef.current.removeVideoInputDevice("camera");
-          }
-          if (clientRef.current.getAudioInputDevice("mic")) {
-            await clientRef.current.removeAudioInputDevice("mic");
-          }
+        if (clientRef.current.getVideoInputDevice("camera")) {
+          await clientRef.current.removeVideoInputDevice("camera");
+        }
+        if (clientRef.current.getAudioInputDevice("mic")) {
+          await clientRef.current.removeAudioInputDevice("mic");
         }
       } catch (e) {
         console.error("Error removing camera device:", e);
@@ -149,6 +147,16 @@ export default function BrowserBroadcaster({ streamKey, ingestUrl }: Props) {
           }
           if (clientRef.current.getAudioInputDevice("mic")) {
             await clientRef.current.removeAudioInputDevice("mic");
+          }
+
+          // If still broadcasting screen-only, add silent audio track back to maintain stream connection
+          if (isScreenActive && broadcastState === "Broadcasting") {
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (AudioContextClass) {
+              const ctx = new AudioContextClass();
+              const dest = ctx.createMediaStreamDestination();
+              await clientRef.current.addAudioInputDevice(dest.stream, "mic");
+            }
           }
         }
       } catch (e) {
@@ -324,6 +332,22 @@ export default function BrowserBroadcaster({ streamKey, ingestUrl }: Props) {
       setBroadcastState("Initializing");
       try {
         if (clientRef.current) {
+          // Ensure at least one audio input device is registered to satisfy IVS audio track requirements
+          let hasAudio = false;
+          try {
+            hasAudio = !!(clientRef.current.getAudioInputDevice("mic") || clientRef.current.getAudioInputDevice("screen-audio"));
+          } catch (e) {}
+
+          if (!hasAudio) {
+            console.warn("[Broadcast Client] No audio device detected. Attaching silent track to satisfy IVS ingest requirements.");
+            const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+            if (AudioContextClass) {
+              const ctx = new AudioContextClass();
+              const dest = ctx.createMediaStreamDestination();
+              await clientRef.current.addAudioInputDevice(dest.stream, "mic");
+            }
+          }
+
           // AWS IVS Web Broadcast SDK uses client.startBroadcast(streamKey, ingestUrl)
           console.log("[Broadcast Client] Ingest URL:", ingestUrl);
           await clientRef.current.startBroadcast(streamKey, ingestUrl);
