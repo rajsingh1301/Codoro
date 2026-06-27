@@ -10,6 +10,9 @@ export async function createStreamInDB(data: {
   title: string;
   description: string;
   communityId: string;
+  creatorId: string;
+  creatorName: string;
+  creatorImage: string;
 }) {
   const streamId = randomUUID();
 
@@ -20,33 +23,19 @@ export async function createStreamInDB(data: {
     new PutCommand({
       TableName: "streams",
       Item: {
-
         streamId,
-
         title: data.title,
-
         description: data.description,
-
         communityId: data.communityId,
-
-        creatorId: "temp-user",
-
-        creatorName: "Mayank",
-
+        creatorId: data.creatorId,
+        creatorName: data.creatorName,
+        creatorImage: data.creatorImage,
         status: "OFFLINE",
-
         channelArn: ivs.channelArn,
-
         playbackUrl: ivs.playbackUrl,
-
         streamKey: ivs.streamKey,
-
         viewCount: 0,
-
         createdAt: new Date().toISOString(),
-
-        
-
       },
     }),
   );

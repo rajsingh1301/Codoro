@@ -1,27 +1,25 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { getLatestMessages } from "@/src/services/messages-services";
 
-/**
- * @route GET /api/messages?streamId=...
- * @desc Get chat history for a stream
- * 
- * @route POST /api/messages
- * @desc Post a new chat message
- * 
- * @scalability
- * - Post operations must have micro-second processing time to handle bursts of chat traffic (10k+ messages/sec).
- * - Utilizes real-time Pub/Sub architecture or WebSockets. HTTP polling is discouraged at scale.
- * - Chat history: DynamoDB queries on Partition Key (streamId) sorted by Sort Key (createdAt) for optimal indexing.
- */
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const streamId = searchParams.get("streamId");
 
-export async function GET() {
-  return NextResponse.json({
-    message: "GET /api/messages - Chat history placeholder",
-    data: []
-  });
+  if (!streamId) {
+    return NextResponse.json({ error: "Missing streamId" }, { status: 400 });
+  }
+
+  try {
+    const messages = await getLatestMessages(streamId);
+    return NextResponse.json({ data: messages });
+  } catch (error) {
+    console.error("GET /api/messages error:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }
 }
 
 export async function POST() {
   return NextResponse.json({
-    message: "POST /api/messages - Post chat message placeholder"
+    message: "POST /api/messages - Post chat message placeholder (handled via WebSockets)"
   }, { status: 201 });
 }
