@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { getStreamById } from "@/src/services/streams-services";
+import { getStreamById, updateStreamStatus } from "@/src/services/streams-services";
 import { getIVSStreamStatus } from "@/src/services/ivs-status-service";
 
 export async function GET(
@@ -22,11 +22,19 @@ export async function GET(
     );
   }
 
-  const status = await getIVSStreamStatus(
-    stream.channelArn
-  );
+  // Fetch the actual streaming state from AWS IVS
+  const ivsStatus = await getIVSStreamStatus(stream.channelArn); // "LIVE" or "OFFLINE"
+  let currentStatus = stream.status; // "OFFLINE", "LIVE", or "ENDED"
+
+  if (ivsStatus === "LIVE" && currentStatus !== "LIVE") {
+    await updateStreamStatus(streamId, "LIVE");
+    currentStatus = "LIVE";
+  } else if (ivsStatus === "OFFLINE" && currentStatus === "LIVE") {
+    await updateStreamStatus(streamId, "ENDED");
+    currentStatus = "ENDED";
+  }
 
   return NextResponse.json({
-    status,
+    status: currentStatus,
   });
 }
