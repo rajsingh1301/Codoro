@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Poppins, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/src/components/shared";
+import { AppBackground } from "@/src/components/ui/app-background";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const poppins = Poppins({
+  weight: ["300", "400", "500", "600", "700", "800"],
   subsets: ["latin"],
+  variable: "--font-poppins",
 });
 
 const geistMono = Geist_Mono({
@@ -27,12 +29,15 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-bg-main text-txt-primary font-sans antialiased">
+      <body className="min-h-full flex flex-col bg-transparent text-txt-primary font-sans antialiased relative">
+        <AppBackground />
         <ClerkProvider>
-          <Header />
-          {children}
+          <div className="relative z-10 flex flex-col flex-1">
+            <Header />
+            {children}
+          </div>
         </ClerkProvider>
       </body>
     </html>

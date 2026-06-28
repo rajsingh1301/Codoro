@@ -23,7 +23,12 @@ export async function GET(
   }
 
   // Fetch the actual streaming state from AWS IVS
-  const ivsStatus = await getIVSStreamStatus(stream.channelArn); // "LIVE" or "OFFLINE"
+  let ivsStatus = "OFFLINE";
+  try {
+    ivsStatus = await getIVSStreamStatus(stream.channelArn); // "LIVE" or "OFFLINE"
+  } catch (err) {
+    console.error("Failed to fetch IVS stream status from AWS:", err);
+  }
   let currentStatus = stream.status; // "OFFLINE", "LIVE", or "ENDED"
 
   if (ivsStatus === "LIVE" && currentStatus !== "LIVE") {

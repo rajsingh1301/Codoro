@@ -1,5 +1,7 @@
 import React from "react";
 import Link from "next/link";
+import { LiveBadge } from "../ui/live-badge";
+import { ViewerCount } from "./viewer-count";
 
 type Stream = {
   streamId: string;
@@ -18,135 +20,91 @@ type Props = {
   communityName?: string;
 };
 
-function getGradientFromTitle(title: string) {
-  let hash = 0;
-  for (let i = 0; i < title.length; i++) {
-    hash = title.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const gradients = [
-    "from-indigo-900 to-purple-800",
-    "from-violet-900 to-fuchsia-800",
-    "from-rose-900 to-amber-700",
-    "from-emerald-900 to-teal-800",
-    "from-cyan-900 to-blue-800",
-    "from-purple-900 to-pink-700",
-    "from-slate-800 to-slate-900",
-    "from-blue-900 to-indigo-800",
-  ];
-  const index = Math.abs(hash) % gradients.length;
-  return gradients[index];
+// Map tech/community names to syntax colors
+function getTagColorClass(tagName: string) {
+  const name = tagName.toLowerCase();
+  if (name.includes("react")) return "bg-syntax-blue/10 text-syntax-blue border-syntax-blue/20";
+  if (name.includes("go") || name.includes("kubernetes")) return "bg-syntax-blue/10 text-syntax-blue border-syntax-blue/20";
+  if (name.includes("python")) return "bg-syntax-green/10 text-syntax-green border-syntax-green/20";
+  if (name.includes("ai") || name.includes("llm")) return "bg-accent/10 text-accent border-accent/20";
+  if (name.includes("devops") || name.includes("rust")) return "bg-syntax-orange/10 text-syntax-orange border-syntax-orange/20";
+  
+  // Default fallback (violet/accent)
+  return "bg-accent-dim/10 text-accent border-accent-dim/30";
 }
 
 export default function StreamCard({ stream, communityName }: Props) {
   const isLive = stream.status === "LIVE";
-  const gradientClass = getGradientFromTitle(stream.title);
+  const tagColor = getTagColorClass(communityName || "");
 
   return (
     <Link 
       href={`/streams/${stream.streamId}`}
-      className="group flex flex-col h-full bg-card-bg hover:bg-card-bg border border-border-main hover:border-brand/40 rounded-[14px] overflow-hidden transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.08)] hover:-translate-y-0.5 cursor-pointer"
+      className="group flex flex-col h-full bg-surface border border-border hover:border-border-bright rounded-lg overflow-hidden transition-all duration-150 ease-out hover:shadow-[0_0_0_1px_#7C3AED33,0_4px_20px_#7C3AED15] cursor-pointer"
     >
       {/* Thumbnail Aspect Container */}
-      <div className="relative aspect-video w-full bg-[#0a0a0a] overflow-hidden">
-        {/* Dynamic Gradient Thumbnail Cover */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${gradientClass} flex flex-col justify-between p-4 transition-transform duration-300 group-hover:scale-[1.01] select-none`}>
-          {/* Logo overlay */}
-          <div className="flex items-center justify-between text-white/40 text-[9px] font-bold tracking-wider uppercase">
-            <span>CodeLive Space</span>
-            <span>💻</span>
-          </div>
-
-          <div className="my-auto text-center px-2">
-            <h5 className="text-white font-extrabold text-xs sm:text-sm tracking-wide drop-shadow-md line-clamp-2">
-              {stream.title}
-            </h5>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-white/40 text-[9px] font-bold uppercase tracking-wider">
-            <span>By {stream.creatorName}</span>
-          </div>
+      <div className="relative aspect-video w-full bg-base overflow-hidden border-b border-border">
+        {/* Dynamic Gradient Thumbnail Cover (Subtle) */}
+        <div className="absolute inset-0 bg-base flex flex-col items-center justify-center transition-transform duration-150 ease-out group-hover:scale-[1.02] select-none p-4">
+           {/* Replace neon gradient with a dark tech pattern or subtle logo */}
+           <span className="font-mono text-muted text-xs font-semibold tracking-widest opacity-30">
+             {stream.streamId.substring(0, 8).toUpperCase()}
+           </span>
         </div>
 
-        {/* Live / Offline Status Overlay */}
+        {/* Top Left: Live / Offline Status Overlay */}
         <div className="absolute top-3 left-3 z-10 flex gap-2">
           {isLive ? (
-            <span className="flex items-center gap-1.5 bg-rose-600/90 text-white font-bold text-[10px] uppercase px-2.5 py-1 rounded-xl shadow-sm">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-white"></span>
-              </span>
-              LIVE
-            </span>
+            <LiveBadge />
           ) : (
-            <span className="bg-surface/90 text-txt-secondary border border-border-main font-bold text-[10px] uppercase px-2.5 py-1 rounded-xl">
+            <span className="bg-elevated text-muted border border-border h-5 px-2 rounded-full font-mono text-[10px] font-medium uppercase flex items-center justify-center">
               OFFLINE
             </span>
           )}
         </div>
 
-        {/* View Count Overlay */}
+        {/* Top Right: View Count Overlay */}
         {isLive && stream.viewCount !== undefined && (
-          <div className="absolute bottom-3 right-3 z-10 bg-surface/90 text-white text-[10px] font-bold px-2 py-0.5 rounded-xl border border-border-main">
-            👤 {stream.viewCount} {stream.viewCount === 1 ? 'viewer' : 'viewers'}
+          <div className="absolute top-3 right-3 z-10 bg-elevated/90 px-2 py-0.5 rounded-full border border-border">
+            <ViewerCount count={stream.viewCount} />
           </div>
         )}
       </div>
 
       {/* Info Content Section */}
-      <div className="p-5 flex flex-col flex-grow justify-between gap-4">
-        <div className="space-y-2">
-          {/* Community Tag */}
-          {communityName && (
-            <span className="inline-block text-[10px] font-bold tracking-wider text-brand uppercase bg-brand/10 px-2.5 py-0.5 rounded-full border border-brand/20">
-              {communityName}
-            </span>
-          )}
-
-          {/* Title */}
-          <h4 className="text-txt-primary font-bold text-sm line-clamp-1 group-hover:text-brand transition duration-200">
-            {stream.title}
-          </h4>
-
-          {/* Description */}
-          {stream.description && (
-            <p className="text-txt-secondary text-xs line-clamp-2 leading-relaxed">
-              {stream.description}
-            </p>
-          )}
-        </div>
+      <div className="p-4 flex flex-col flex-grow justify-between gap-3">
+        
+        {/* Title (No Truncation) */}
+        <h4 className="text-primary font-bold text-sm group-hover:text-accent transition-colors duration-150 ease-out leading-snug">
+          {stream.title}
+        </h4>
 
         {/* Creator Identity Footer */}
-        <div className="flex items-center gap-3 border-t border-border-main pt-4">
+        <div className="flex items-center gap-3 pt-2">
           {stream.creatorImage ? (
             <img
               src={stream.creatorImage}
               alt={stream.creatorName}
-              className="h-7 w-7 rounded-full object-cover border border-border-main"
+              className="h-6 w-6 rounded-full object-cover border border-border"
             />
           ) : (
-            <div className="h-7 w-7 rounded-full bg-brand/10 border border-brand/25 flex items-center justify-center text-[10px] font-bold text-brand">
+            <div className="h-6 w-6 rounded-full bg-elevated border border-border flex items-center justify-center text-[10px] font-bold text-secondary">
               {stream.creatorName[0].toUpperCase()}
             </div>
           )}
-          <div className="flex flex-col">
-            <span className="text-txt-primary text-xs font-semibold group-hover:text-brand transition">
-              {stream.creatorName}
-            </span>
-            <span className="text-[10px] text-txt-muted font-medium">
-              {(() => {
-                try {
-                  const parts = stream.createdAt.split("T")[0].split("-");
-                  const year = parts[0];
-                  const monthIndex = parseInt(parts[1], 10) - 1;
-                  const day = parseInt(parts[2], 10);
-                  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                  return `${months[monthIndex]} ${day}, ${year}`;
-                } catch (e) {
-                  return stream.createdAt;
-                }
-              })()}
+          
+          <div className="flex flex-col flex-1">
+            <span className="text-secondary text-xs font-medium">
+              {stream.creatorName.startsWith("@") ? stream.creatorName : `@${stream.creatorName.toLowerCase().replace(/ /g, "")}`}
             </span>
           </div>
+
+          {/* Community Tag */}
+          {communityName && (
+            <span className={`h-5 px-2 rounded-full text-xs font-medium font-mono border ${tagColor} flex items-center justify-center`}>
+              {communityName}
+            </span>
+          )}
         </div>
       </div>
     </Link>
@@ -156,27 +114,24 @@ export default function StreamCard({ stream, communityName }: Props) {
 // Reusable Skeleton loader for Grid placement
 export function StreamCardSkeleton() {
   return (
-    <div className="flex flex-col h-full bg-slate-900/20 border border-white/5 rounded-2xl overflow-hidden animate-pulse">
+    <div className="flex flex-col h-full bg-surface border border-border rounded-lg overflow-hidden">
       {/* Thumbnail Skeleton */}
-      <div className="aspect-video w-full bg-slate-800/40 relative">
-        <div className="absolute top-3 left-3 h-5 w-12 bg-slate-800 rounded-full" />
+      <div className="aspect-video w-full bg-base border-b border-border relative">
+        <div className="absolute top-3 left-3 h-5 w-16 bg-elevated rounded-full border border-border" />
       </div>
 
       {/* Content Skeleton */}
-      <div className="p-5 flex flex-col flex-grow justify-between gap-4">
-        <div className="space-y-3">
-          <div className="h-4 w-20 bg-slate-800 rounded-full" />
-          <div className="h-4 w-full bg-slate-800 rounded" />
-          <div className="h-3 w-4/5 bg-slate-800/60 rounded" />
+      <div className="p-4 flex flex-col flex-grow justify-between gap-4">
+        <div className="space-y-3 pt-1">
+          <div className="h-4 w-full bg-elevated rounded-md" />
+          <div className="h-4 w-4/5 bg-elevated rounded-md" />
         </div>
 
         {/* Creator Info Skeleton */}
-        <div className="flex items-center gap-3 border-t border-white/5 pt-4">
-          <div className="h-7 w-7 rounded-full bg-slate-800" />
-          <div className="space-y-1.5 flex-1">
-            <div className="h-3 w-20 bg-slate-800 rounded" />
-            <div className="h-2 w-12 bg-slate-800/60 rounded" />
-          </div>
+        <div className="flex items-center gap-3 pt-2">
+          <div className="h-6 w-6 rounded-full bg-elevated border border-border" />
+          <div className="h-3 w-24 bg-elevated rounded-md flex-1" />
+          <div className="h-5 w-16 bg-elevated rounded-full border border-border" />
         </div>
       </div>
     </div>

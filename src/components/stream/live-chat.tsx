@@ -143,19 +143,19 @@ export default function LiveChat({ streamId, currentUser }: Props) {
   };
 
   return (
-    <div className="flex flex-col h-[550px] rounded-2xl border border-white/10 bg-slate-900/60 backdrop-blur-xl shadow-2xl overflow-hidden font-sans">
+    <div className="flex flex-col h-full rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[#111111] overflow-hidden font-sans">
       {/* Header */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-slate-900/40">
+      <div className="flex items-center justify-between px-6 py-4 border-b border-[rgba(255,255,255,0.08)] bg-[#171717]">
         <div className="flex items-center gap-3">
-          <span className="relative flex h-3 w-3">
+          <span className="relative flex h-2.5 w-2.5">
             <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${status === "connected" ? "bg-emerald-400" : status === "connecting" ? "bg-amber-400" : "bg-rose-400"}`}></span>
-            <span className={`relative inline-flex rounded-full h-3 w-3 ${status === "connected" ? "bg-emerald-500" : status === "connecting" ? "bg-amber-500" : "bg-rose-500"}`}></span>
+            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${status === "connected" ? "bg-emerald-500" : status === "connecting" ? "bg-amber-500" : "bg-rose-500"}`}></span>
           </span>
-          <h3 className="font-semibold text-white tracking-wide text-sm md:text-base">Live Stream Chat</h3>
+          <h3 className="font-semibold text-white tracking-wide text-sm">Live Stream Chat</h3>
         </div>
 
         {/* Connection Status Badge */}
-        <span className={`text-[10px] px-2.5 py-1 rounded-full font-medium tracking-wider uppercase border ${
+        <span className={`text-[9px] px-2.5 py-0.5 rounded font-mono font-semibold tracking-wider uppercase border ${
           status === "connected" 
             ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
             : status === "connecting"
@@ -167,15 +167,15 @@ export default function LiveChat({ streamId, currentUser }: Props) {
       </div>
 
       {/* User Information Section */}
-      <div className="px-6 py-3 border-b border-white/5 bg-slate-950/20 flex items-center justify-between text-xs text-slate-400">
+      <div className="px-6 py-2.5 border-b border-[rgba(255,255,255,0.08)] bg-[#171717]/40 flex items-center justify-between text-xs text-[#9E9E9E]">
         {currentUser ? (
           <div className="flex items-center gap-2">
             <img 
               src={currentUser.imageUrl} 
               alt={currentUser.username} 
-              className="w-5 h-5 rounded-full object-cover border border-white/15"
+              className="w-5 h-5 rounded-full object-cover border border-[rgba(255,255,255,0.08)]"
             />
-            <span className="text-slate-300">Chatting as:</span>
+            <span className="text-[#9E9E9E]">Chatting as:</span>
             <span className={`font-semibold ${getUsernameColor(currentUser.username)}`}>{currentUser.username}</span>
           </div>
         ) : (
@@ -186,13 +186,13 @@ export default function LiveChat({ streamId, currentUser }: Props) {
       {/* Messages Window */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
         {!isHistoryLoaded ? (
-          <div className="h-full flex flex-col items-center justify-center text-slate-500 text-xs gap-2 py-10">
-            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-indigo-400" />
+          <div className="h-full flex flex-col items-center justify-center text-[#5C5C5C] text-xs gap-2 py-10">
+            <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#6366F1]" />
             <p>Loading chat history...</p>
           </div>
         ) : messages.length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-slate-500 text-xs gap-2 py-10">
-            <svg className="w-8 h-8 opacity-40 animate-pulse text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="h-full flex flex-col items-center justify-center text-[#5C5C5C] text-xs gap-2 py-10">
+            <svg className="w-8 h-8 opacity-40 animate-pulse text-[#6366F1]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
             <p>Welcome to the stream! Say hello in chat.</p>
@@ -208,18 +208,18 @@ export default function LiveChat({ streamId, currentUser }: Props) {
                 <img 
                   src={msg.avatar} 
                   alt={msg.username} 
-                  className="w-8 h-8 rounded-full object-cover border border-white/10 mt-0.5"
+                  className="w-8 h-8 rounded-full object-cover border border-[rgba(255,255,255,0.08)] mt-0.5"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-baseline gap-2">
                     <span className={`text-xs font-semibold ${getUsernameColor(msg.username)}`}>
                       {msg.username}
                     </span>
-                    <span className="text-[9px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                    <span className="text-[9px] text-[#5C5C5C] opacity-0 group-hover:opacity-100 transition-opacity duration-150">
                       {timeStr}
                     </span>
                   </div>
-                  <p className="text-sm text-slate-200 break-words leading-relaxed font-normal mt-0.5">
+                  <p className="text-sm text-[#9E9E9E] break-words leading-relaxed font-normal mt-0.5">
                     {msg.message}
                   </p>
                 </div>
@@ -231,8 +231,8 @@ export default function LiveChat({ streamId, currentUser }: Props) {
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-white/5 bg-slate-900/40">
-        <div className="flex items-center gap-2 bg-white/5 border border-white/10 rounded-xl p-1.5 focus-within:border-indigo-500/50 transition duration-200">
+      <form onSubmit={handleSendMessage} className="p-4 border-t border-[rgba(255,255,255,0.08)] bg-[#171717]/40">
+        <div className="flex items-center gap-2 bg-[#111111] border border-[rgba(255,255,255,0.08)] rounded-xl p-1.5 focus-within:border-[#6366F1]/50 transition duration-200">
           <input
             type="text"
             value={inputValue}
@@ -247,13 +247,13 @@ export default function LiveChat({ streamId, currentUser }: Props) {
                 ? "Send a live message..." 
                 : "Connecting to chat server..."
             }
-            className="flex-1 bg-transparent px-3 py-1.5 text-sm text-white focus:outline-none disabled:text-slate-500 placeholder-slate-500"
+            className="flex-1 bg-transparent px-3 py-1.5 text-sm text-white focus:outline-none disabled:text-[#5C5C5C] placeholder-[#5C5C5C]"
             maxLength={150}
           />
           <button
             type="submit"
             disabled={status !== "connected" || !inputValue.trim() || !currentUser || !isHistoryLoaded}
-            className="bg-indigo-600 hover:bg-indigo-500 disabled:bg-indigo-600/30 disabled:text-slate-400/50 text-white font-medium text-xs px-4 py-2 rounded-lg transition duration-200 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
+            className="bg-[#6366F1] hover:bg-[#5053E4] disabled:bg-[#6366F1]/30 disabled:text-[#5C5C5C] text-white font-medium text-xs px-4 py-2 rounded-lg transition duration-200 flex items-center justify-center cursor-pointer disabled:cursor-not-allowed"
           >
             Send
           </button>

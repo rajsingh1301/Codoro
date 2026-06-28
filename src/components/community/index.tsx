@@ -17,3 +17,5 @@ export function CommunityCard({
     </div>
   );
 }
+
+export { default as CommunitiesClient } from "./communities-client";

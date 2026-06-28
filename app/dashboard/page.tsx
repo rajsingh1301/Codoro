@@ -31,6 +31,8 @@ export default async function DashboardPage() {
       viewCount: s.viewCount || 0,
       createdAt: s.createdAt,
       communityId: s.communityId || "",
+      streamKey: s.streamKey || "",
+      playbackUrl: s.playbackUrl || "",
     }));
 
   const communities = communitiesData
@@ -46,7 +48,7 @@ export default async function DashboardPage() {
     }));
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white font-sans">
+    <div className="min-h-screen bg-transparent text-white font-sans">
       <DashboardClient user={user} streams={streams} communities={communities} />
     </div>
   );
