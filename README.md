@@ -133,8 +133,8 @@ graph TD
     Creator -->|1. Sign In / Sign Up| Clerk
     Viewer -->|1. Sign In / Sign Up| Clerk
     
-    Creator -->|2. Ingest Stream (RTMP/RTMPS)| IVS
-    IVS -->|3. Broadcast Playback (HLS URL)| Viewer
+    Creator -->|2. Ingest Stream via RTMP or RTMPS| IVS
+    IVS -->|3. Broadcast Playback via HLS Playback URL| Viewer
     
     Creator -->|4. HTTP Requests / Page Actions| Vercel
     Viewer -->|4. HTTP Requests / Page Actions| Vercel
