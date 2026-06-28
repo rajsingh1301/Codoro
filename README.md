@@ -98,23 +98,59 @@ Traditional live-streaming platforms (like Twitch or YouTube) are built for mass
 
 Codoro uses a decoupled, event-driven architecture combining Next.js Server Actions with dedicated AWS media resources and realtime socket servers:
 
-```
-[User Browser]
-      │
-      ├── (RTMP Video Ingest) ────────► [Amazon IVS] ──── (HLS Video Playback) ──► [Viewer Player]
-      │
-      ├── (HTTPS Pages / Actions) ────► [Next.js App (Vercel)]
-      │                                       │
-      │                                       ├── (Session Verification) ───────► [Clerk Auth]
-      │                                       │
-      │                                       ├── (Queries & Mutations) ────────► [Amazon DynamoDB]
-      │                                       │
-      │                                       └── (AI Generation Prompts) ──────► [Amazon Bedrock]
-      │
-      └── (Realtime Websockets) ──────► [Socket.io (Railway)] ── (Persist Message) ──► [Amazon DynamoDB]
-```
+```mermaid
+graph TD
+    %% Theme Styling
+    classDef client fill:#0F0F1A,stroke:#1E1E3A,stroke-width:2px,color:#F1F0FF;
+    classDef server fill:#1e1b4b,stroke:#4338ca,stroke-width:2px,color:#e0e7ff;
+    classDef aws fill:#232f3e,stroke:#ff9900,stroke-width:2px,color:#ff9900;
+    classDef ext fill:#111827,stroke:#374151,stroke-width:2px,color:#f3f4f6;
 
-*For a detailed block visualization, please check the [architecture_diagram.md](file:///Users/mayankraj/.gemini/antigravity-ide/brain/f695205a-423f-4b29-adbb-03befa6ee199/architecture_diagram.md).*
+    subgraph Clients ["Client Layer (Browsers)"]
+        Creator["Creator Browser <br/> (Webcam / Screen Share / OBS)"]:::client
+        Viewer["Viewer Browser <br/> (Player / Chat Room)"]:::client
+    end
+
+    subgraph Auth ["Security & Identity"]
+        Clerk["Clerk Authentication <br/> (JWT / User Sessions)"]:::ext
+    end
+
+    subgraph Host ["Core Application Service"]
+        Vercel["Next.js Server-Side App <br/> (Hosted on Vercel)"]:::server
+    end
+
+    subgraph Realtime ["Realtime Communication"]
+        Railway["Socket.IO Server <br/> (Hosted on Railway)"]:::server
+    end
+
+    subgraph Services ["AWS Infrastructure"]
+        DynamoDB[("Amazon DynamoDB <br/> (Streams / Users / Messages)")]:::aws
+        IVS["Amazon Interactive Video Service <br/> (Low-Latency Live Streaming)"]:::aws
+        Bedrock["Amazon Bedrock <br/> (AI Summaries / Q&A Assistant)"]:::aws
+    end
+
+    %% Client Interactions
+    Creator -->|1. Sign In / Sign Up| Clerk
+    Viewer -->|1. Sign In / Sign Up| Clerk
+    
+    Creator -->|2. Ingest Stream (RTMP/RTMPS)| IVS
+    IVS -->|3. Broadcast Playback (HLS URL)| Viewer
+    
+    Creator -->|4. HTTP Requests / Page Actions| Vercel
+    Viewer -->|4. HTTP Requests / Page Actions| Vercel
+    
+    Creator <-->|5. Chat Messages & Viewer Presence| Railway
+    Viewer <-->|5. Chat Messages & Viewer Presence| Railway
+
+    %% Backend Integrations
+    Vercel -->|6. Token Verification| Clerk
+    Vercel -->|7. Database Queries & Mutations| DynamoDB
+    Vercel -->|8. Create / Configure Channels| IVS
+    Vercel -->|9. Invoke LLM Prompt Models| Bedrock
+
+    %% Socket Server Integrations
+    Railway -->|10. Persist Realtime Chat History| DynamoDB
+```
 
 ---
 
