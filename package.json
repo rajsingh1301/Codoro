@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start-socket": "ts-node src/lib/socket/server.ts",
     "lint": "eslint"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "react-syntax-highlighter": "^16.1.1",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
+    "ts-node": "^10.9.2",
     "uuid": "^14.0.0",
     "zod": "^4.4.3"
   },
