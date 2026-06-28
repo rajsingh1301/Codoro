@@ -157,10 +157,12 @@ export default async function StreamPage({
 
                   <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
                     <ShareButton />
-                    <StreamSummaryDrawer
-                      streamTitle={stream.title}
-                      streamDescription={stream.description || ""}
-                    />
+                    {stream.status !== "ENDED" && (
+                      <StreamSummaryDrawer
+                        streamTitle={stream.title}
+                        streamDescription={stream.description || ""}
+                      />
+                    )}
                   </div>
                 </div>
                 

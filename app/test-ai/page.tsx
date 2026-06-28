@@ -1,9 +1,16 @@
 import { askAI } from "@/src/services/ai-services";
 
+export const dynamic = "force-dynamic";
+
 export default async function TestAIPage() {
-  const response = await askAI(
-    "Explain React Hooks in simple words"
-  );
+  let response = "AWS Bedrock credentials not available or failed to load.";
+  try {
+    response = await askAI(
+      "Explain React Hooks in simple words"
+    );
+  } catch (err) {
+    console.error("Failed to run askAI during render:", err);
+  }
 
   return (
     <div className="min-h-screen w-full relative">

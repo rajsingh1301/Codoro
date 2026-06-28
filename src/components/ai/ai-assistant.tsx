@@ -24,7 +24,7 @@ export default function AIAssistant({ streamTitle, streamDescription }: Props) {
     {
       id: "welcome",
       role: "ai",
-      content: "Hello! I'm your CodeLive AI Assistant. Paste your code below or ask me any questions about the stream.",
+      content: "Hello! I'm your Codoro AI Assistant. Paste your code below or ask me any questions about the stream.",
     }
   ]);
   const [loading, setLoading] = useState(false);
