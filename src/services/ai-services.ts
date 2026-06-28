@@ -94,31 +94,25 @@ export async function generateStreamSummary(
 ) {
   const command = new ConverseCommand({
     modelId: "amazon.nova-lite-v1:0",
-
+    system: [
+      {
+        text: `Analyze this live coding stream and generate a structured summary.
+Return ONLY valid JSON, no extra text:
+{
+  "title": "one line session title",
+  "summary": "2-3 sentence summary of what was built/discussed",
+  "topics": ["topic1", "topic2", "topic3"],
+  "highlights": ["key moment 1", "key moment 2", "key moment 3"],
+  "difficulty": "Beginner | Intermediate | Advanced"
+}`
+      }
+    ],
     messages: [
       {
         role: "user",
         content: [
           {
-            text: `
-Create a concise learning summary for this coding stream.
-
-Stream Title:
-${streamTitle}
-
-Stream Description:
-${streamDescription}
-
-Provide:
-
-## Topics Covered
-
-## Key Learnings
-
-## Recommended Next Steps
-
-Keep it practical and concise.
-            `,
+            text: `Stream Title: ${streamTitle}\nStream Description: ${streamDescription}`,
           },
         ],
       },
@@ -127,5 +121,5 @@ Keep it practical and concise.
 
   const response = await bedrockClient.send(command);
 
-  return response.output?.message?.content?.[0]?.text ?? "No summary generated";
+  return response.output?.message?.content?.[0]?.text ?? "{}";
 }

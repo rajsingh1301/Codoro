@@ -9,6 +9,7 @@ import ShareButton from "@/src/components/stream/share-button";
 import FloatingActionPill from "@/src/components/stream/floating-action-pill";
 
 import AIAssistant from "@/src/components/ai/ai-assistant";
+import StreamSummary from "@/src/components/ai/stream-summary";
 import StreamSummaryDrawer from "@/src/components/ai/stream-summary-drawer";
 import ViewTracker from "@/src/components/stream/view-tracker";
 import LiveChat from "@/src/components/stream/live-chat";
@@ -168,6 +169,18 @@ export default async function StreamPage({
                 <p className="text-sm text-[#9E9E9E] leading-relaxed max-w-3xl font-medium">
                   {stream.description || "No stream description provided."}
                 </p>
+
+                {stream.status === "ENDED" && (
+                  <div className="mt-8 border-t border-[rgba(255,255,255,0.08)] pt-6">
+                    <h2 className="text-xl font-bold text-white mb-4">Session Summary</h2>
+                    <StreamSummary
+                      streamId={stream.streamId}
+                      streamTitle={stream.title}
+                      streamDescription={stream.description || ""}
+                      initialSummary={stream.summary}
+                    />
+                  </div>
+                )}
 
                 {/* AI Assistant Tool */}
                 <div className="pt-2">

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ReactMarkdown from "react-markdown";
 
 type Props = {
   streamTitle: string;
@@ -14,35 +15,6 @@ type Message = {
   role: "user" | "ai";
   content: string;
   code?: string;
-};
-
-const renderMessage = (content: string) => {
-  const parts = content.split(/(```[\w]*\n[\s\S]*?```)/g);
-  return parts.map((part, i) => {
-    const match = part.match(/```(\w+)?\n([\s\S]*?)```/);
-    if (match) {
-      const language = match[1] || "typescript";
-      const code = match[2];
-      return (
-        <SyntaxHighlighter
-          key={i}
-          language={language}
-          style={vscDarkPlus as any}
-          customStyle={{
-            background: "#08080F",
-            border: "1px solid #1E1E3A",
-            borderRadius: "6px",
-            fontSize: "12px",
-            margin: "8px 0",
-            fontFamily: "JetBrains Mono, monospace",
-          }}
-        >
-          {code}
-        </SyntaxHighlighter>
-      );
-    }
-    return <span key={i} style={{ whiteSpace: "pre-wrap" }}>{part}</span>;
-  });
 };
 
 export default function AIAssistant({ streamTitle, streamDescription }: Props) {
@@ -141,11 +113,61 @@ export default function AIAssistant({ streamTitle, streamDescription }: Props) {
                   : "bg-surface text-secondary rounded-lg rounded-tl-none border border-border w-full"
               }`}
             >
-              {msg.role === "ai" ? (
-                <div className="whitespace-pre-wrap font-medium leading-relaxed">{renderMessage(msg.content)}</div>
-              ) : (
-                <div className="whitespace-pre-wrap font-medium">{msg.content}</div>
-              )}
+              <ReactMarkdown
+                components={{
+                  code({ node, className, children, ...props }: any) {
+                    const match = /language-(\w+)/.exec(className || '')
+                    return match ? (
+                      <SyntaxHighlighter
+                        style={vscDarkPlus as any}
+                        language={match[1]}
+                        customStyle={{
+                          background: '#08080F',
+                          border: '1px solid #1E1E3A',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          margin: '8px 0',
+                          fontFamily: 'JetBrains Mono, monospace'
+                        }}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code style={{
+                        background: '#16162A',
+                        border: '1px solid #1E1E3A',
+                        borderRadius: '3px',
+                        padding: '1px 5px',
+                        fontSize: '12px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        color: '#A78BFA'
+                      }}>
+                        {children}
+                      </code>
+                    )
+                  },
+                  h1: ({children}) => <h1 style={{fontSize:'16px', fontWeight:700, color:'#F1F0FF', margin:'16px 0 8px'}}>{children}</h1>,
+                  h2: ({children}) => <h2 style={{fontSize:'14px', fontWeight:600, color:'#F1F0FF', margin:'14px 0 6px'}}>{children}</h2>,
+                  h3: ({children}) => <h3 style={{fontSize:'13px', fontWeight:600, color:'#C4B5FD', margin:'12px 0 4px'}}>{children}</h3>,
+                  p: ({children}) => <p style={{fontSize:'13px', color:'#A09DC0', lineHeight:'1.7', margin:'6px 0'}}>{children}</p>,
+                  ul: ({children}) => <ul style={{paddingLeft:'16px', margin:'6px 0'}}>{children}</ul>,
+                  ol: ({children}) => <ol style={{paddingLeft:'16px', margin:'6px 0'}}>{children}</ol>,
+                  li: ({children}) => <li style={{fontSize:'13px', color:'#A09DC0', lineHeight:'1.7', margin:'3px 0'}}>{children}</li>,
+                  strong: ({children}) => <strong style={{color:'#F1F0FF', fontWeight:600}}>{children}</strong>,
+                  blockquote: ({children}) => (
+                    <blockquote style={{
+                      borderLeft:'2px solid #7C3AED',
+                      paddingLeft:'12px',
+                      margin:'8px 0',
+                      color:'#6B7280'
+                    }}>
+                      {children}
+                    </blockquote>
+                  ),
+                }}
+              >
+                {msg.content}
+              </ReactMarkdown>
 
               {msg.code && msg.role === "user" && (
                 <div className="mt-3 bg-base border border-border rounded-md overflow-hidden">

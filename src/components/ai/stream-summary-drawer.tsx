@@ -11,6 +11,7 @@ import {
   ThumbsDown,
   RefreshCw
 } from "lucide-react";
+import { StreamSummary as StreamSummaryType } from "@/src/types/stream";
 
 type Props = {
   streamTitle: string;
@@ -22,7 +23,7 @@ export default function StreamSummaryDrawer({
   streamDescription,
 }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [summary, setSummary] = useState("");
+  const [summary, setSummary] = useState<StreamSummaryType | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [feedback, setFeedback] = useState<"up" | "down" | null>(null);
@@ -44,7 +45,26 @@ export default function StreamSummaryDrawer({
 
       if (res.ok) {
         const data = await res.json();
-        setSummary(data.summary || "");
+        const bedrockResponse = data.summary || "";
+
+        // 6. JSON parse safely karo:
+        try {
+          const clean = bedrockResponse
+            .replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
+          const parsed = JSON.parse(clean);
+          setSummary(parsed);
+        } catch (e) {
+          // fallback: plain text as summary
+          setSummary({
+            title: streamTitle,
+            summary: bedrockResponse,
+            topics: [],
+            highlights: [],
+            difficulty: "Intermediate",
+          });
+        }
       } else {
         alert("Failed to generate summary from AI engine.");
       }
@@ -58,7 +78,19 @@ export default function StreamSummaryDrawer({
 
   const handleCopy = () => {
     if (typeof window !== "undefined" && summary) {
-      navigator.clipboard.writeText(summary);
+      const text = `
+${summary.title}
+
+${summary.summary}
+
+Topics: ${summary.topics?.join(", ") || ""}
+
+Highlights:
+${summary.highlights?.map((h) => `• ${h}`).join("\n") || ""}
+
+Difficulty: ${summary.difficulty}
+      `.trim();
+      navigator.clipboard.writeText(text);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -169,8 +201,54 @@ export default function StreamSummaryDrawer({
               </div>
 
               {/* Summary Text Content Box */}
-              <div className="p-5 bg-[#171717] border border-[rgba(255,255,255,0.08)] rounded-2xl text-xs text-[#9E9E9E] leading-relaxed whitespace-pre-wrap select-text font-medium">
-                {summary}
+              <div className="p-5 bg-[#171717] border border-[rgba(255,255,255,0.08)] rounded-2xl space-y-4">
+                {summary.title && (
+                  <h4 className="text-sm font-bold text-white leading-snug">
+                    {summary.title}
+                  </h4>
+                )}
+                
+                <p className="text-xs text-[#9E9E9E] leading-relaxed">
+                  {summary.summary}
+                </p>
+
+                {summary.topics && summary.topics.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-2">
+                    {summary.topics.map((topic, i) => (
+                      <span
+                        key={i}
+                        className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#6366F1]/10 text-[#A78BFA] border border-[#6366F1]/20 font-sans"
+                      >
+                        {topic}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {summary.highlights && summary.highlights.length > 0 && (
+                  <div className="space-y-2 pt-2 border-t border-[rgba(255,255,255,0.04)]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#5C5C5C]">
+                      Highlights
+                    </span>
+                    <ul className="space-y-1.5">
+                      {summary.highlights.map((highlight, i) => (
+                        <li key={i} className="text-xs text-[#9E9E9E] flex items-start gap-2">
+                          <Check size={12} className="text-[#6366F1] shrink-0 mt-0.5" />
+                          <span>{highlight}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between pt-2 border-t border-[rgba(255,255,255,0.04)]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#5C5C5C]">
+                    Difficulty
+                  </span>
+                  <span className="text-[10px] px-2 py-0.5 rounded border border-[rgba(255,255,255,0.08)] bg-[#111111] text-[#9E9E9E] font-semibold">
+                    {summary.difficulty}
+                  </span>
+                </div>
               </div>
 
               {/* Feedback and Regeneration Area */}

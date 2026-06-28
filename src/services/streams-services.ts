@@ -2,6 +2,7 @@ import { GetCommand, PutCommand, ScanCommand, UpdateCommand, DeleteCommand } fro
 import { docClient } from "@/src/lib/dynamodb/client";
 import { randomUUID } from "crypto";
 import { createIVSChannel, deleteIVSChannel } from "@/src/services/ivs-services";
+import { generateStreamSummary } from "@/src/services/ai-services";
 
 // Create a new stream in the database
 export async function createStreamInDB(data: {
@@ -80,26 +81,73 @@ export async function getStreamById(streamId: string) {
 // Update the status of a stream in the database
 export async function updateStreamStatus(
   streamId: string,
-
   status: "LIVE" | "OFFLINE" | "ENDED",
 ) {
+  // Fetch current stream to check state
+  const stream = await getStreamById(streamId);
+  if (!stream) {
+    console.error(`Stream not found for ID: ${streamId}`);
+    return;
+  }
+
+  if (stream.status === status) {
+    return; // Already in the correct status
+  }
+
+  let summaryObj: any = undefined;
+
+  if (status === "ENDED" && !stream.summary) {
+    try {
+      console.log(`Generating AI stream summary for ended stream: ${streamId}`);
+      const bedrockResponse = await generateStreamSummary(
+        stream.title,
+        stream.description || ""
+      );
+
+      // Safe JSON parsing
+      try {
+        const clean = bedrockResponse
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+        summaryObj = JSON.parse(clean);
+      } catch (e) {
+        summaryObj = {
+          title: stream.title,
+          summary: bedrockResponse,
+          topics: [],
+          highlights: [],
+          difficulty: "Intermediate"
+        };
+      }
+    } catch (err) {
+      console.error(`Failed to generate stream summary for ${streamId}:`, err);
+    }
+  }
+
+  const updateExpressionParts = ["#status = :status"];
+  const expressionAttributeNames: Record<string, string> = {
+    "#status": "status",
+  };
+  const expressionAttributeValues: Record<string, any> = {
+    ":status": status,
+  };
+
+  if (summaryObj) {
+    updateExpressionParts.push("#summary = :summary");
+    expressionAttributeNames["#summary"] = "summary";
+    expressionAttributeValues[":summary"] = summaryObj;
+  }
+
   await docClient.send(
     new UpdateCommand({
       TableName: "streams",
-
       Key: {
         streamId,
       },
-
-      UpdateExpression: "SET #status = :status",
-
-      ExpressionAttributeNames: {
-        "#status": "status",
-      },
-
-      ExpressionAttributeValues: {
-        ":status": status,
-      },
+      UpdateExpression: `SET ${updateExpressionParts.join(", ")}`,
+      ExpressionAttributeNames: expressionAttributeNames,
+      ExpressionAttributeValues: expressionAttributeValues,
     }),
   );
 }
