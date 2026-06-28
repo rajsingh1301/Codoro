@@ -1,9 +1,7 @@
-import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand, ScanCommand, UpdateCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
 import { docClient } from "@/src/lib/dynamodb/client";
 import { randomUUID } from "crypto";
-import { ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { createIVSChannel } from "@/src/services/ivs-services";
+import { createIVSChannel, deleteIVSChannel } from "@/src/services/ivs-services";
 
 // Create a new stream in the database
 export async function createStreamInDB(data: {
@@ -119,5 +117,29 @@ export async function getAllStreams() {
     console.error("GET ALL STREAMS ERROR:", error);
     return [];
   }
+}
+
+export async function deleteStream(streamId: string) {
+  const stream = await getStreamById(streamId);
+  if (!stream) {
+    throw new Error("Stream not found");
+  }
+
+  // Clean up AWS IVS channel if associated
+  if (stream.channelArn) {
+    console.log("Cleaning up associated IVS Channel:", stream.channelArn);
+    await deleteIVSChannel(stream.channelArn);
+  }
+
+  // Delete from DynamoDB
+  console.log("Deleting stream from DynamoDB streams table:", streamId);
+  await docClient.send(
+    new DeleteCommand({
+      TableName: "streams",
+      Key: {
+        streamId,
+      },
+    })
+  );
 }
 

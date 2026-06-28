@@ -7,8 +7,24 @@ export default async function CommunitiesPage() {
   const dbCommunities = await getCommunities();
 
   return (
-    <div className="w-full bg-[#08080F] z-10 relative min-h-[calc(100vh-64px)] flex flex-col">
-      <CommunitiesClient dbCommunities={dbCommunities as any} />
+    <div className="min-h-screen w-full relative">
+      {/* Dark Dot Matrix */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: '#0a0a0a',
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, #222222 0.5px, transparent 1px),
+            radial-gradient(circle at 75% 75%, #111111 0.5px, transparent 1px)
+          `,
+          backgroundSize: '10px 10px',
+          imageRendering: 'pixelated',
+        }}
+      />
+      {/* existing page content — relative z-10 lagao taaki content dot matrix ke upar rahe */}
+      <div className="relative z-10 w-full flex flex-col">
+        <CommunitiesClient dbCommunities={dbCommunities as any} />
+      </div>
     </div>
   );
 }

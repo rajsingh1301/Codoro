@@ -34,8 +34,21 @@ export default async function HomePage() {
   }));
 
   return (
-    <main className="flex-grow w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-10">
-      <HomeClient initialStreams={streams} initialCommunities={communities} />
-    </main>
+    <div 
+      className="w-full"
+      style={{
+        minHeight: '100vh',
+        background: `
+          radial-gradient(ellipse 80% 60% at 50% 40%, #7c3200 0%, #3d1a00 25%, #0a0a0a 60%),
+          radial-gradient(ellipse 60% 80% at 50% 100%, #5a2400 0%, #0a0a0a 50%)
+        `,
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+    >
+      <div className="relative z-10 w-full max-w-[1280px] mx-auto px-4 sm:px-6 md:px-8 py-10">
+        <HomeClient initialStreams={streams} initialCommunities={communities} />
+      </div>
+    </div>
   );
 }

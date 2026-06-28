@@ -78,101 +78,119 @@ export default async function StreamPage({
     communitiesCount = allCommunities.filter((c: any) => c.ownerId === user.id).length;
   }
 
-  if (isCreator) {
-    return (
-      <>
-        <ViewTracker streamId={stream.streamId} />
-        <CreatorStudioView
-          stream={stream as any}
-          user={user}
-          ingestEndpoint={ingestEndpoint}
-          communityName={communityName}
-          totalStreamsCount={totalStreamsCount}
-          communitiesCount={communitiesCount}
-          creatorStreams={creatorStreams}
-        />
-      </>
-    );
-  }
-
   return (
-    <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-8 space-y-6 text-primary relative pb-28">
+    <div className="min-h-screen w-full relative">
+      {/* Dark Dot Matrix */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: '#0a0a0a',
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, #222222 0.5px, transparent 1px),
+            radial-gradient(circle at 75% 75%, #111111 0.5px, transparent 1px)
+          `,
+          backgroundSize: '10px 10px',
+          imageRendering: 'pixelated',
+        }}
+      />
       
-      {/* Back navigation */}
-      <div className="flex items-center justify-between">
-        <Link
-          href="/streams"
-          className="text-xs text-[#9E9E9E] hover:text-white font-semibold transition-colors flex items-center gap-1 cursor-pointer"
-        >
-          <ChevronLeft size={14} /> Back to Streams
-        </Link>
-      </div>
-
-      <ViewTracker streamId={stream.streamId} />
-
-      {/* Main split grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        
-        {/* Left Column: Player, details and AI widgets */}
-        <div className="lg:col-span-8 space-y-6">
-          
-          {/* Frameless Player wrapper */}
-          <div className="border border-[rgba(255,255,255,0.08)] bg-[#111111] rounded-2xl overflow-hidden shadow-sm">
-            <StreamPlayerWrapper
-              streamId={stream.streamId}
-              playbackUrl={stream.playbackUrl || ""}
-              initialStatus={stream.status as any}
+      {/* existing page content — relative z-10 lagao taaki content dot matrix ke upar rahe */}
+      <div className="relative z-10">
+        {isCreator ? (
+          <>
+            <ViewTracker streamId={stream.streamId} />
+            <CreatorStudioView
+              stream={stream as any}
+              user={user}
+              ingestEndpoint={ingestEndpoint}
+              communityName={communityName}
+              totalStreamsCount={totalStreamsCount}
+              communitiesCount={communitiesCount}
+              creatorStreams={creatorStreams}
             />
-          </div>
+          </>
+        ) : (
+          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 md:px-8 py-8 space-y-6 text-primary relative pb-28">
+            
+            {/* Back navigation */}
+            <div className="flex items-center justify-between">
+              <Link
+                href="/streams"
+                className="text-xs text-[#9E9E9E] hover:text-white font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+              >
+                <ChevronLeft size={14} /> Back to Streams
+              </Link>
+            </div>
 
-          {/* Details Toolbar */}
-          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-2">
-            <div className="space-y-3">
-              <h1 className="text-2xl font-bold tracking-tight text-white">{stream.title}</h1>
+            <ViewTracker streamId={stream.streamId} />
+
+            {/* Main split grid */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               
-              <div className="flex items-center gap-4 text-xs font-mono font-medium text-[#9E9E9E]">
-                <LiveViewerTracker 
-                  streamId={stream.streamId} 
-                  totalViews={stream.viewCount ?? 0} 
-                  userId={user?.id || ""} 
-                />
+              {/* Left Column: Player, details and AI widgets */}
+              <div className="lg:col-span-8 space-y-6">
+                
+                {/* Frameless Player wrapper */}
+                <div className="border border-[rgba(255,255,255,0.08)] bg-[#111111] rounded-2xl overflow-hidden shadow-sm">
+                  <StreamPlayerWrapper
+                    streamId={stream.streamId}
+                    playbackUrl={stream.playbackUrl || ""}
+                    initialStatus={stream.status as any}
+                  />
+                </div>
+
+                {/* Details Toolbar */}
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 py-2">
+                  <div className="space-y-3">
+                    <h1 className="text-2xl font-bold tracking-tight text-white">{stream.title}</h1>
+                    
+                    <div className="flex items-center gap-4 text-xs font-mono font-medium text-[#9E9E9E]">
+                      <LiveViewerTracker 
+                        streamId={stream.streamId} 
+                        totalViews={stream.viewCount ?? 0} 
+                        userId={user?.id || ""} 
+                        status={stream.status || ""}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
+                    <ShareButton />
+                    <StreamSummaryDrawer
+                      streamTitle={stream.title}
+                      streamDescription={stream.description || ""}
+                    />
+                  </div>
+                </div>
+                
+                <div className="border-b border-[rgba(255,255,255,0.08)]" />
+                
+                <p className="text-sm text-[#9E9E9E] leading-relaxed max-w-3xl font-medium">
+                  {stream.description || "No stream description provided."}
+                </p>
+
+                {/* AI Assistant Tool */}
+                <div className="pt-2">
+                  <AIAssistant
+                    streamTitle={stream.title}
+                    streamDescription={stream.description || ""}
+                  />
+                </div>
+
               </div>
+
+              {/* Right Column: Full-height Live Chat */}
+              <div className="lg:col-span-4 lg:sticky lg:top-8 h-[550px] lg:h-[750px] shrink-0">
+                <LiveChat streamId={stream.streamId} currentUser={user} />
+              </div>
+
             </div>
 
-            <div className="flex items-center gap-3 self-start sm:self-center shrink-0">
-              <ShareButton />
-              <StreamSummaryDrawer
-                streamTitle={stream.title}
-                streamDescription={stream.description || ""}
-              />
-            </div>
+            <FloatingActionPill />
+
           </div>
-          
-          <div className="border-b border-[rgba(255,255,255,0.08)]" />
-          
-          <p className="text-sm text-[#9E9E9E] leading-relaxed max-w-3xl font-medium">
-            {stream.description || "No stream description provided."}
-          </p>
-
-          {/* AI Assistant Tool */}
-          <div className="pt-2">
-            <AIAssistant
-              streamTitle={stream.title}
-              streamDescription={stream.description || ""}
-            />
-          </div>
-
-        </div>
-
-        {/* Right Column: Full-height Live Chat */}
-        <div className="lg:col-span-4 lg:sticky lg:top-8 h-[550px] lg:h-[750px] shrink-0">
-          <LiveChat streamId={stream.streamId} currentUser={user} />
-        </div>
-
+        )}
       </div>
-
-      <FloatingActionPill />
-
     </div>
   );
 }

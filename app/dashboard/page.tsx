@@ -48,8 +48,24 @@ export default async function DashboardPage() {
     }));
 
   return (
-    <div className="min-h-screen bg-transparent text-white font-sans">
-      <DashboardClient user={user} streams={streams} communities={communities} />
+    <div className="min-h-screen w-full relative text-white font-sans">
+      {/* Dark Dot Matrix */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          backgroundColor: '#0a0a0a',
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, #222222 0.5px, transparent 1px),
+            radial-gradient(circle at 75% 75%, #111111 0.5px, transparent 1px)
+          `,
+          backgroundSize: '10px 10px',
+          imageRendering: 'pixelated',
+        }}
+      />
+      {/* existing page content — relative z-10 lagao taaki content dot matrix ke upar rahe */}
+      <div className="relative z-10">
+        <DashboardClient user={user} streams={streams} communities={communities} />
+      </div>
     </div>
   );
 }

@@ -33,9 +33,50 @@ function getTagColorClass(tagName: string) {
   return "bg-accent-dim/10 text-accent border-accent-dim/30";
 }
 
+// Helper to resolve community specific visual variables
+function getCommunityGradientAndIcon(communityName?: string) {
+  const name = (communityName || "").toLowerCase().trim();
+  let matchedKey = "default";
+  
+  if (name.includes("react")) {
+    matchedKey = "react";
+  } else if (name.includes("go developer") || name === "go" || name.includes("golang")) {
+    matchedKey = "go developer";
+  } else if (name.includes("block-chain") || name.includes("blockchain") || name.includes("web3") || name.includes("crypto")) {
+    matchedKey = "block-chain";
+  } else if (name.includes("typescript") || name.includes("ts")) {
+    matchedKey = "typescript";
+  } else if (name.includes("python") || name.includes("py")) {
+    matchedKey = "python";
+  } else if (name.includes("java") || name.includes("spring")) {
+    matchedKey = "java";
+  }
+
+  const gradients: Record<string, string> = {
+    'react': 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
+    'go developer': 'linear-gradient(135deg, #0a1628 0%, #0d2137 50%, #0a4a2e 100%)',
+    'block-chain': 'linear-gradient(135deg, #1a0a2e 0%, #2d1b4e 50%, #4a1d8a 100%)',
+    'typescript': 'linear-gradient(135deg, #0a1628 0%, #1a2744 50%, #1e3a5f 100%)',
+    'python': 'linear-gradient(135deg, #1a2810 0%, #2d3e1a 50%, #1a3a2e 100%)',
+    'java': 'linear-gradient(135deg, #2e1a0a 0%, #4a2e10 50%, #6b3a10 100%)',
+    'default': 'linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16162a 100%)',
+  };
+
+  const icons: Record<string, string> = {
+    'react': '⚛', 'go developer': 'Go', 'block-chain': '⬡',
+    'typescript': 'TS', 'python': 'Py', 'java': 'Java', 'default': '<>'
+  };
+
+  return {
+    gradient: gradients[matchedKey],
+    icon: icons[matchedKey]
+  };
+}
+
 export default function StreamCard({ stream, communityName }: Props) {
   const isLive = stream.status === "LIVE";
   const tagColor = getTagColorClass(communityName || "");
+  const { gradient, icon } = getCommunityGradientAndIcon(communityName);
 
   return (
     <Link 
@@ -45,10 +86,12 @@ export default function StreamCard({ stream, communityName }: Props) {
       {/* Thumbnail Aspect Container */}
       <div className="relative aspect-video w-full bg-base overflow-hidden border-b border-border">
         {/* Dynamic Gradient Thumbnail Cover (Subtle) */}
-        <div className="absolute inset-0 bg-base flex flex-col items-center justify-center transition-transform duration-150 ease-out group-hover:scale-[1.02] select-none p-4">
-           {/* Replace neon gradient with a dark tech pattern or subtle logo */}
-           <span className="font-mono text-muted text-xs font-semibold tracking-widest opacity-30">
-             {stream.streamId.substring(0, 8).toUpperCase()}
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center transition-transform duration-150 ease-out group-hover:scale-[1.02] select-none p-4"
+          style={{ background: gradient }}
+        >
+           <span className="font-mono text-[32px] font-bold text-white/15 tracking-wide text-center uppercase leading-none">
+             {icon}
            </span>
         </div>
 
@@ -66,7 +109,7 @@ export default function StreamCard({ stream, communityName }: Props) {
         {/* Top Right: View Count Overlay */}
         {isLive && stream.viewCount !== undefined && (
           <div className="absolute top-3 right-3 z-10 bg-elevated/90 px-2 py-0.5 rounded-full border border-border">
-            <ViewerCount count={stream.viewCount} />
+            <ViewerCount streamId={stream.streamId} initialCount={stream.viewCount} />
           </div>
         )}
       </div>

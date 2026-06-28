@@ -31,8 +31,7 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-transparent text-txt-primary font-sans antialiased relative">
-        <AppBackground />
+      <body className="min-h-full flex flex-col bg-[#070707] text-txt-primary font-sans antialiased relative">
         <ClerkProvider>
           <div className="relative z-10 flex flex-col flex-1">
             <Header />

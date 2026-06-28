@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 type Props = {
   streamTitle: string;
@@ -12,6 +14,35 @@ type Message = {
   role: "user" | "ai";
   content: string;
   code?: string;
+};
+
+const renderMessage = (content: string) => {
+  const parts = content.split(/(```[\w]*\n[\s\S]*?```)/g);
+  return parts.map((part, i) => {
+    const match = part.match(/```(\w+)?\n([\s\S]*?)```/);
+    if (match) {
+      const language = match[1] || "typescript";
+      const code = match[2];
+      return (
+        <SyntaxHighlighter
+          key={i}
+          language={language}
+          style={vscDarkPlus as any}
+          customStyle={{
+            background: "#08080F",
+            border: "1px solid #1E1E3A",
+            borderRadius: "6px",
+            fontSize: "12px",
+            margin: "8px 0",
+            fontFamily: "JetBrains Mono, monospace",
+          }}
+        >
+          {code}
+        </SyntaxHighlighter>
+      );
+    }
+    return <span key={i} style={{ whiteSpace: "pre-wrap" }}>{part}</span>;
+  });
 };
 
 export default function AIAssistant({ streamTitle, streamDescription }: Props) {
@@ -110,7 +141,11 @@ export default function AIAssistant({ streamTitle, streamDescription }: Props) {
                   : "bg-surface text-secondary rounded-lg rounded-tl-none border border-border w-full"
               }`}
             >
-              <div className="whitespace-pre-wrap font-medium">{msg.content}</div>
+              {msg.role === "ai" ? (
+                <div className="whitespace-pre-wrap font-medium leading-relaxed">{renderMessage(msg.content)}</div>
+              ) : (
+                <div className="whitespace-pre-wrap font-medium">{msg.content}</div>
+              )}
 
               {msg.code && msg.role === "user" && (
                 <div className="mt-3 bg-base border border-border rounded-md overflow-hidden">
@@ -121,20 +156,6 @@ export default function AIAssistant({ streamTitle, streamDescription }: Props) {
                   <pre className="p-3 text-xs font-mono text-secondary overflow-x-auto">
                     {msg.code}
                   </pre>
-                </div>
-              )}
-
-              {/* AI Code Blocks Simulation (If response contains backticks, ideally handled by a markdown parser, but we simulate structure here) */}
-              {msg.role === "ai" && msg.content.includes("```") && (
-                <div className="mt-4 bg-base border border-border rounded-md overflow-hidden">
-                  <div className="bg-elevated border-b border-border px-3 py-1.5 text-xs text-muted font-mono flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 rounded-full bg-accent"></span>
-                    AI Assistant Output
-                  </div>
-                  <div className="p-3 text-xs font-mono text-syntax-green overflow-x-auto whitespace-pre-wrap">
-                    {/* Crude extraction for demo purposes */}
-                    {msg.content.split("```")[1]?.replace(/^[\w]+\n/, '') || "// Code output"}
-                  </div>
                 </div>
               )}
             </div>

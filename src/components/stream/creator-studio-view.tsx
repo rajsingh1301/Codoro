@@ -69,7 +69,20 @@ export default function CreatorStudioView({
               </span>
             )}
             <span className="text-[10px] text-[#5C5C5C] font-mono font-semibold uppercase">
-              Created: {new Date(stream.createdAt).toLocaleDateString()}
+              Created: {(() => {
+                if (!stream.createdAt) return "";
+                try {
+                  const parts = stream.createdAt.split("T")[0].split("-");
+                  if (parts.length < 3) return stream.createdAt;
+                  const year = parts[0];
+                  const monthIndex = parseInt(parts[1], 10) - 1;
+                  const day = parseInt(parts[2], 10);
+                  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                  return `${months[monthIndex]} ${day}, ${year}`;
+                } catch (e) {
+                  return stream.createdAt;
+                }
+              })()}
             </span>
           </div>
         </div>

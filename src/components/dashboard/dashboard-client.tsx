@@ -22,9 +22,11 @@ import {
   Key,
   Copy,
   Check,
-  EyeOff
+  EyeOff,
+  Trash2
 } from "lucide-react";
 import AIAssistant from "../ai/ai-assistant";
+import { deleteStreamAction } from "@/src/actions/stream-actions";
 
 type Stream = {
   streamId: string;
@@ -38,6 +40,7 @@ type Stream = {
   communityId?: string;
   streamKey?: string;
   playbackUrl?: string;
+  creatorId?: string;
 };
 
 type Community = {
@@ -166,6 +169,25 @@ export default function DashboardClient({ user, streams, communities }: Props) {
   const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
   const [isSaving, setIsSaving] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [localStreams, setLocalStreams] = useState<Stream[]>(streams);
+
+  useEffect(() => {
+    setLocalStreams(streams);
+  }, [streams]);
+
+  const handleDeleteStream = async (streamId: string) => {
+    const confirmed = window.confirm("Are you sure? This stream and all its data will be permanently deleted.");
+    if (!confirmed) return;
+
+    try {
+      await deleteStreamAction(streamId);
+      setLocalStreams(prev => prev.filter(s => s.streamId !== streamId));
+      alert("Stream deleted successfully!");
+    } catch (err: any) {
+      console.error("FAILED TO DELETE STREAM:", err);
+      alert(`Failed to delete stream: ${err.message || err}`);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -237,11 +259,11 @@ export default function DashboardClient({ user, streams, communities }: Props) {
   }, [mounted]);
 
   // Compute metrics
-  const totalStreamsCount = streams.length;
+  const totalStreamsCount = localStreams.length;
   const communitiesCount = communities.length;
   
-  const latestStream = streams[0] || null;
-  const isLive = streams.some((s) => s.status === "LIVE");
+  const latestStream = localStreams[0] || null;
+  const isLive = localStreams.some((s) => s.status === "LIVE");
   
   const currentStreamStatus = useMemo(() => {
     if (isLive) return "LIVE";
@@ -250,14 +272,14 @@ export default function DashboardClient({ user, streams, communities }: Props) {
   }, [isLive, latestStream]);
 
   const totalViewCount = useMemo(() => {
-    return streams.reduce((sum, s) => sum + (s.viewCount || 0), 0);
-  }, [streams]);
+    return localStreams.reduce((sum, s) => sum + (s.viewCount || 0), 0);
+  }, [localStreams]);
 
   const handleTabChange = (tab: "dashboard" | "streams" | "communities" | "ai-assistant" | "settings" | "stream-keys") => {
     setActiveTab(tab);
   };
 
-  // Render Sidebar
+  // Render Sidebar (Icon-only, 56px wide fixed sidebar)
   const renderSidebar = () => {
     const creatorItems = [
       { id: "dashboard", label: "Overview", icon: <LayoutDashboard size={18} /> },
@@ -272,72 +294,52 @@ export default function DashboardClient({ user, streams, communities }: Props) {
     ];
 
     return (
-      <aside className="group relative w-16 hover:w-56 flex-shrink-0 border-r border-[rgba(255,255,255,0.08)] bg-[#111111] transition-[width] duration-200 ease-in-out z-20 min-h-[calc(100vh-64px)] hidden md:block">
+      <aside className="fixed left-0 top-16 w-14 flex-shrink-0 border-r border-[rgba(255,255,255,0.08)] bg-[#111111] z-20 h-[calc(100vh-64px)] hidden md:block">
         <div className="flex flex-col h-full py-6">
           <nav className="flex-1 space-y-6">
             
             {/* CREATOR SECTION */}
-            <div className="space-y-1.5 px-3">
-              <span className="px-3 text-[9px] font-mono font-bold tracking-widest text-[#5C5C5C] uppercase block opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none">
-                Creator
-              </span>
-              <div className="space-y-1">
-                {creatorItems.map((item) => {
-                  const isActive = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleTabChange(item.id as any)}
-                      className={`flex items-center w-full h-10 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer overflow-hidden relative ${
-                        isActive
-                          ? "bg-[#171717] text-white border-l-2 border-[#6366F1]"
-                          : "text-[#9E9E9E] hover:text-white hover:bg-[#171717]/60"
-                      }`}
-                      title={item.label}
-                    >
-                      <div className="w-10 flex-shrink-0 flex items-center justify-center">
-                        {item.icon}
-                      </div>
-                      <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-1">
-                        {item.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="space-y-1 px-2">
+              {creatorItems.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleTabChange(item.id as any)}
+                    className={`flex items-center justify-center w-full h-10 rounded-lg transition-all duration-200 cursor-pointer relative ${
+                      isActive
+                        ? "bg-[#171717] text-white border-l-2 border-[#6366F1]"
+                        : "text-[#9E9E9E] hover:text-white hover:bg-[#171717]/60"
+                    }`}
+                    title={item.label}
+                  >
+                    {item.icon}
+                  </button>
+                );
+              })}
             </div>
 
-            <div className="border-t border-[rgba(255,255,255,0.08)] mx-3" />
+            <div className="border-t border-[rgba(255,255,255,0.08)] mx-2" />
 
             {/* ACCOUNT SECTION */}
-            <div className="space-y-1.5 px-3">
-              <span className="px-3 text-[9px] font-mono font-bold tracking-widest text-[#5C5C5C] uppercase block opacity-0 group-hover:opacity-100 transition-opacity duration-200 select-none">
-                Account
-              </span>
-              <div className="space-y-1">
-                {accountItems.map((item) => {
-                  const isActive = activeTab === item.id;
-                  return (
-                    <button
-                      key={item.id}
-                      onClick={() => handleTabChange(item.id as any)}
-                      className={`flex items-center w-full h-10 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer overflow-hidden relative ${
-                        isActive
-                          ? "bg-[#171717] text-white border-l-2 border-[#6366F1]"
-                          : "text-[#9E9E9E] hover:text-white hover:bg-[#171717]/60"
-                      }`}
-                      title={item.label}
-                    >
-                      <div className="w-10 flex-shrink-0 flex items-center justify-center">
-                        {item.icon}
-                      </div>
-                      <span className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 ml-1">
-                        {item.label}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
+            <div className="space-y-1 px-2">
+              {accountItems.map((item) => {
+                const isActive = activeTab === item.id;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => handleTabChange(item.id as any)}
+                    className={`flex items-center justify-center w-full h-10 rounded-lg transition-all duration-200 cursor-pointer relative ${
+                      isActive
+                        ? "bg-[#171717] text-white border-l-2 border-[#6366F1]"
+                        : "text-[#9E9E9E] hover:text-white hover:bg-[#171717]/60"
+                    }`}
+                    title={item.label}
+                  >
+                    {item.icon}
+                  </button>
+                );
+              })}
             </div>
 
           </nav>
@@ -347,12 +349,12 @@ export default function DashboardClient({ user, streams, communities }: Props) {
   };
 
   return (
-    <div className="w-full flex">
+    <div className="w-full flex bg-transparent z-10 relative min-h-[calc(100vh-64px)]">
       {/* Sidebar Navigation */}
       {renderSidebar()}
 
       {/* Dynamic Main Dashboard Pane */}
-      <main className="flex-grow px-6 lg:px-12 py-10 max-w-[1400px] w-full mx-auto">
+      <main className="flex-grow md:ml-14 px-6 lg:px-12 py-10 w-full mx-auto relative z-10">
         
         {/* TAB 1: DASHBOARD OVERVIEW */}
         {activeTab === "dashboard" && (
@@ -469,9 +471,9 @@ export default function DashboardClient({ user, streams, communities }: Props) {
                     </button>
                   </div>
 
-                  {streams.length > 0 ? (
+                  {localStreams.length > 0 ? (
                     <div className="divide-y divide-[rgba(255,255,255,0.08)]">
-                      {streams.slice(0, 5).map((stream) => {
+                      {localStreams.slice(0, 5).map((stream) => {
                         const isStreamLive = stream.status === "LIVE";
                         return (
                           <div key={stream.streamId} className="py-4 flex items-center justify-between group transition-all">
@@ -692,9 +694,9 @@ export default function DashboardClient({ user, streams, communities }: Props) {
               <p className="text-sm text-[#9E9E9E] font-medium">Manage broadcast history and credentials</p>
             </div>
 
-            {streams.length > 0 ? (
+            {localStreams.length > 0 ? (
               <div className="bg-[#171717] border border-[rgba(255,255,255,0.08)] rounded-2xl overflow-hidden shadow-sm divide-y divide-[rgba(255,255,255,0.08)]">
-                {streams.map((stream) => (
+                {localStreams.map((stream) => (
                   <div key={stream.streamId} className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 group hover:bg-[#111111]/30 transition-all">
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
@@ -708,12 +710,24 @@ export default function DashboardClient({ user, streams, communities }: Props) {
                       <p className="text-sm text-[#9E9E9E] line-clamp-1 leading-relaxed">{stream.description || "No description provided."}</p>
                       <span className="text-xs text-[#5C5C5C] block font-medium">{formatISOToDate(stream.createdAt, true)}</span>
                     </div>
-                    <Link
-                      href={`/streams/${stream.streamId}`}
-                      className="h-10 px-5 inline-flex items-center justify-center rounded-lg bg-[#111111] border border-[rgba(255,255,255,0.08)] text-[#9E9E9E] hover:text-white hover:border-[rgba(255,255,255,0.16)] font-medium text-sm transition-all cursor-pointer shrink-0 hover:-translate-y-0.5"
-                    >
-                      Configure Room
-                    </Link>
+                    <div className="flex items-center gap-3 self-start md:self-center shrink-0">
+                      <Link
+                        href={`/streams/${stream.streamId}`}
+                        className="h-10 px-5 inline-flex items-center justify-center rounded-lg bg-[#111111] border border-[rgba(255,255,255,0.08)] text-[#9E9E9E] hover:text-white hover:border-[rgba(255,255,255,0.16)] font-medium text-sm transition-all cursor-pointer hover:-translate-y-0.5"
+                      >
+                        Configure Room
+                      </Link>
+                      
+                      {(!stream.creatorId || stream.creatorId === user.id) && (
+                        <button
+                          onClick={() => handleDeleteStream(stream.streamId)}
+                          className="h-10 w-10 flex items-center justify-center rounded-lg bg-[#111111] border border-red-900/30 text-red-500 hover:text-red-400 hover:border-red-500/50 transition-all cursor-pointer hover:-translate-y-0.5"
+                          title="Delete Stream"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -822,61 +836,67 @@ export default function DashboardClient({ user, streams, communities }: Props) {
           </div>
         )}
 
-        {/* TAB 5: SETTINGS */}
+        {/* TAB 5: SETTINGS (Horizontally and Vertically Centered Grid Layout) */}
         {activeTab === "settings" && (
-          <div className="space-y-8 animate-in fade-in duration-300 max-w-2xl">
-            <div className="border-b border-[rgba(255,255,255,0.08)] pb-6 space-y-2">
-              <h2 className="text-3xl font-bold text-white tracking-tight">Settings</h2>
-              <p className="text-sm text-[#9E9E9E] font-medium">Configure profile and broadcast defaults</p>
-            </div>
-
-            <div className="bg-[#171717] border border-[rgba(255,255,255,0.08)] rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
-              {/* Form Field 1 */}
-              <div className="space-y-3">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  Profile Name
-                </label>
-                <input
-                  type="text"
-                  value={profileName}
-                  onChange={(e) => setProfileName(e.target.value)}
-                  className="w-full h-10 px-4 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-sm outline-none transition-all placeholder-[#5C5C5C]"
-                />
-                <p className="text-xs text-[#5C5C5C]">
-                  This name will appear as the creator identifier under all streams.
-                </p>
+          <div 
+            className="w-full flex items-center justify-center"
+            style={{ minHeight: "calc(100vh - 144px)" }}
+          >
+            <div className="w-full max-w-[560px] bg-[#171717] border border-[rgba(255,255,255,0.08)] rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
+              <div className="border-b border-[rgba(255,255,255,0.08)] pb-4 space-y-1">
+                <h2 className="text-xl font-bold text-white tracking-tight">Settings</h2>
+                <p className="text-xs text-[#9E9E9E] font-medium">Configure profile and broadcast defaults</p>
               </div>
 
-              {/* Form Field 2 */}
-              <div className="space-y-3">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  Default Stream Description
-                </label>
-                <textarea
-                  value={streamDescription}
-                  onChange={(e) => setStreamDescription(e.target.value)}
-                  rows={3}
-                  className="w-full px-4 py-3 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-sm outline-none transition-all resize-none placeholder-[#5C5C5C]"
-                />
-              </div>
+              {/* Form Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Profile Name (Col 1) */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-semibold text-white uppercase tracking-wider block">
+                    Profile Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profileName}
+                    onChange={(e) => setProfileName(e.target.value)}
+                    className="w-full h-10 px-4 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-xs outline-none transition-all placeholder-[#5C5C5C]"
+                  />
+                </div>
 
-              {/* Form Field 3 */}
-              <div className="space-y-3">
-                <label className="text-xs font-semibold text-white uppercase tracking-wider block">
-                  Preferred Stream Category
-                </label>
-                <select
-                  value={defaultCategory}
-                  onChange={(e) => setDefaultCategory(e.target.value)}
-                  className="w-full h-10 px-4 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-sm outline-none transition-all cursor-pointer"
-                >
-                  <option value="TypeScript">TypeScript</option>
-                  <option value="React">React</option>
-                  <option value="Next.js">Next.js</option>
-                  <option value="Python">Python</option>
-                  <option value="Go">Go</option>
-                  <option value="AWS">AWS</option>
-                </select>
+                {/* Preferred Category (Col 2) */}
+                <div className="space-y-2">
+                  <label className="text-[10px] font-semibold text-white uppercase tracking-wider block">
+                    Stream Category
+                  </label>
+                  <select
+                    value={defaultCategory}
+                    onChange={(e) => setDefaultCategory(e.target.value)}
+                    className="w-full h-10 px-4 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-xs outline-none transition-all cursor-pointer"
+                  >
+                    <option value="TypeScript">TypeScript</option>
+                    <option value="React">React</option>
+                    <option value="Next.js">Next.js</option>
+                    <option value="Python">Python</option>
+                    <option value="Go">Go</option>
+                    <option value="AWS">AWS</option>
+                  </select>
+                </div>
+
+                {/* Description (Full Width) */}
+                <div className="md:col-span-2 space-y-2">
+                  <label className="text-[10px] font-semibold text-white uppercase tracking-wider block">
+                    Default Stream Description
+                  </label>
+                  <textarea
+                    value={streamDescription}
+                    onChange={(e) => setStreamDescription(e.target.value)}
+                    rows={3}
+                    className="w-full px-4 py-3 bg-[#111111] border border-[rgba(255,255,255,0.08)] focus:border-[rgba(255,255,255,0.16)] focus:ring-1 focus:ring-[#6366F1] rounded-xl text-white text-xs outline-none transition-all resize-none placeholder-[#5C5C5C]"
+                  />
+                  <p className="text-[10px] text-[#5C5C5C]">
+                    This description is automatically selected when launching a new stream.
+                  </p>
+                </div>
               </div>
 
               <div className="flex justify-end pt-4 border-t border-[rgba(255,255,255,0.08)]">

@@ -1,7 +1,11 @@
-import React from "react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { io, Socket } from "socket.io-client";
 
 interface ViewerCountProps {
-  count: number;
+  streamId?: string;
+  initialCount: number;
 }
 
 export function formatViewerCount(count: number): string {
@@ -11,9 +15,42 @@ export function formatViewerCount(count: number): string {
   return count.toString();
 }
 
-export function ViewerCount({ count }: ViewerCountProps) {
+export function ViewerCount({ streamId, initialCount }: ViewerCountProps) {
+  const [count, setCount] = useState(initialCount);
+
+  useEffect(() => {
+    if (!streamId) return;
+
+    let socketUrl = "http://localhost:3001";
+    if (typeof window !== "undefined") {
+      const hostname = window.location.hostname;
+      socketUrl = process.env.NEXT_PUBLIC_SOCKET_SERVER_URL || `http://${hostname}:3001`;
+    }
+
+    const socket: Socket = io(socketUrl, {
+      transports: ["polling", "websocket"],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 2000,
+    });
+
+    socket.on("connect", () => {
+      socket.emit("join-stream", { streamId, userId: "guest-card" });
+    });
+
+    socket.on("viewer-count", (data: { streamId: string; viewerCount: number }) => {
+      if (data.streamId === streamId) {
+        setCount(data.viewerCount);
+      }
+    });
+
+    return () => {
+      socket.emit("leave-stream", { streamId });
+      socket.disconnect();
+    };
+  }, [streamId]);
+
   return (
-    <div className="flex items-center gap-1.5 text-text-secondary font-mono text-[11px] font-medium">
+    <div className="flex items-center gap-1.5 text-[#9E9E9E] font-mono text-[11px] font-medium">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"

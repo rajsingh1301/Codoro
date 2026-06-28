@@ -7,10 +7,13 @@ type Props = {
   streamId: string;
   totalViews: number;
   userId: string;
+  status: string;
 };
 
-export default function LiveViewerTracker({ streamId, totalViews, userId }: Props) {
+export default function LiveViewerTracker({ streamId, totalViews, userId, status }: Props) {
   const [watchingNow, setWatchingNow] = useState(0);
+
+  const isLive = status.toLowerCase() === "live" || status.toLowerCase() === "active";
 
   useEffect(() => {
     let socketUrl = "http://localhost:3001";
@@ -46,19 +49,23 @@ export default function LiveViewerTracker({ streamId, totalViews, userId }: Prop
   return (
     <div className="mt-2 space-y-2">
       {/* Real-time Presence UI */}
-      <div className="flex items-center gap-2 text-xs md:text-sm text-rose-500 font-bold uppercase tracking-wider">
-        <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
-        </span>
-        🔴 LIVE NOW
-      </div>
+      {isLive && (
+        <div className="flex items-center gap-2 text-xs md:text-sm text-rose-500 font-bold uppercase tracking-wider">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+          </span>
+          🔴 LIVE NOW
+        </div>
+      )}
 
       <div className="flex items-center gap-3 text-xs md:text-sm font-medium mt-1.5 flex-wrap">
-        <span className="flex items-center gap-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 rounded-full">
-          👁 Watching Now: <strong className="font-bold text-rose-200">{watchingNow}</strong>
-        </span>
-        <span className="flex items-center gap-1.5 bg-slate-800/40 text-slate-400 border border-white/5 px-3 py-1 rounded-full backdrop-blur-sm">
+        {isLive && (
+          <span className="flex items-center gap-1.5 bg-rose-500/10 text-rose-400 border border-rose-500/20 px-3 py-1 rounded-full">
+            👁 Watching Now: <strong className="font-bold text-rose-200">{watchingNow}</strong>
+          </span>
+        )}
+        <span className="flex items-center gap-1.5 bg-[#171717] text-slate-400 border border-[rgba(255,255,255,0.08)] px-3 py-1 rounded-full backdrop-blur-sm">
           📈 Total Views: <strong className="font-bold text-slate-200">{totalViews}</strong>
         </span>
       </div>

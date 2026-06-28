@@ -9,21 +9,21 @@ export default function Header() {
 
   const getLinkClass = (href: string) => {
     const isActive = pathname === href;
-    return `text-xs font-semibold transition duration-200 tracking-wide ${
-      isActive ? "text-[#6366F1]" : "text-[#9E9E9E] hover:text-white"
+    return `text-sm font-medium transition duration-200 tracking-wide ${
+      isActive ? "text-[#7C3AED]" : "text-[#4A4870] hover:text-white"
     }`;
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-[rgba(255,255,255,0.08)] bg-[#070707]/85 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-[#1E1E3A] backdrop-blur-md bg-[#08080F]/80">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-4 sm:px-6 md:px-8">
         {/* Left: Logo and navigation */}
-        <div className="flex items-center gap-10">
+        <div className="flex items-center gap-8">
           <Link 
             href="/" 
-            className="text-base font-black text-white tracking-wider uppercase hover:text-[#6366F1] transition duration-200"
+            className="text-base font-black text-white tracking-wider uppercase hover:text-[#7C3AED] transition duration-200"
           >
-            Codorö<span className="text-[#6366F1] font-black">.</span>
+            Codorö<span className="text-[#7C3AED] font-black">.</span>
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <Link 
@@ -65,11 +65,15 @@ export default function Header() {
           </Show>
 
           <Show when="signed-in">
-            <UserButton showName appearance={{
-              elements: {
-                userButtonOuterIdentifier: "text-[#9E9E9E] font-bold text-xs mr-1 uppercase tracking-wider"
-              }
-            }} />
+            <div className="flex items-center gap-3">
+              <Link 
+                href="/dashboard"
+                className="h-7 px-3 text-xs font-semibold border border-[#2D2D5E] text-[#A09DC0] rounded-md bg-transparent hover:border-[#7C3AED] hover:text-[#C4B5FD] transition-all flex items-center justify-center cursor-pointer"
+              >
+                Dashboard
+              </Link>
+              <UserButton />
+            </div>
           </Show>
         </div>
       </div>

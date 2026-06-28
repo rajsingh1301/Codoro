@@ -1,6 +1,6 @@
 "use server";
 
-import { createStreamInDB } from "@/src/services/streams-services";
+import { createStreamInDB, deleteStream, getStreamById } from "@/src/services/streams-services";
 import { getCurrentUser } from "@/src/lib/auth/current-user";
 
 // Server action to handle stream creation form submission
@@ -22,6 +22,26 @@ export async function createStream(formData: FormData) {
     creatorName: user.username,
     creatorImage: user.imageUrl,
   });
+}
+
+// Server action to handle stream deletion
+export async function deleteStreamAction(streamId: string) {
+  const user = await getCurrentUser();
+  if (!user) {
+    throw new Error("Unauthorized: You must be signed in to delete a stream.");
+  }
+
+  const stream = await getStreamById(streamId);
+  if (!stream) {
+    throw new Error("Stream not found.");
+  }
+
+  // Security Check: Sirf stream creator delete kar sake
+  if (stream.creatorId !== user.id) {
+    throw new Error("Forbidden: You are not the creator of this stream.");
+  }
+
+  await deleteStream(streamId);
 }
 
 
