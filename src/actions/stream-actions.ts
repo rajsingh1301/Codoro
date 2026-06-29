@@ -2,6 +2,7 @@
 
 import { createStreamInDB, deleteStream, getStreamById } from "@/src/services/streams-services";
 import { getCurrentUser } from "@/src/lib/auth/current-user";
+import { redirect } from "next/navigation";
 
 // Server action to handle stream creation form submission
 export async function createStream(formData: FormData) {
@@ -14,7 +15,7 @@ export async function createStream(formData: FormData) {
     throw new Error("Unauthorized: You must be signed in to create a stream.");
   }
 
-  await createStreamInDB({
+  const streamId = await createStreamInDB({
     title,
     description,
     communityId,
@@ -22,6 +23,8 @@ export async function createStream(formData: FormData) {
     creatorName: user.username,
     creatorImage: user.imageUrl,
   });
+
+  redirect(`/streams/${streamId}`);
 }
 
 // Server action to handle stream deletion
