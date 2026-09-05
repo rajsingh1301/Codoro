@@ -9,7 +9,7 @@
 [![Socket.io](https://img.shields.io/badge/Socket.IO-Realtime-010101?logo=socket.io)](https://socket.io/)
 [![Status](https://img.shields.io/badge/Status-Hackathon--Ready-brightgreen)](#)
 
-> Next-Gen Developer-First Live Coding Platform with Low-Latency Streaming, Real-Time Interactive Chat, and AI-Powered Coding Assistants.
+> A live-coding platform with low-latency streaming, real-time chat, and AI-powered coding assistants.
 
 **Live Demo URL**: [https://codoro.vercel.app](https://codoro.vercel.app)
 
